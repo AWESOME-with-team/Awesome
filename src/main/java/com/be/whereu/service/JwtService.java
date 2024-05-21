@@ -14,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토큰인지 검증하는 클래스
@@ -95,15 +96,20 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
 
     /**
      * refreshToken으로 AccessToken 생성
-     * @param refreshToken
+     * @param refreshJws
      * @return
      */
-    public String createAccessTokenFromRefreshToken(String refreshToken){
-        RefreshTokenEntity refreshTokenEntity= refreshTokenRepository.findByToken(refreshToken);
-        if(refreshTokenEntity==null ||refreshTokenEntity.getExpire_date().isBefore(LocalDateTime.now())){
-            if(refreshTokenEntity!=null){
+    @Transactional
+    public String createAccessTokenFromRefreshToken(String refreshJws){
+        RefreshTokenEntity refreshTokenEntity= refreshTokenRepository.findByToken(refreshJws);
+        if(refreshTokenEntity==null || refreshTokenEntity.isExpired()){
+
+            if (refreshTokenEntity != null) {
+                log.debug("refresh token expired");
                 refreshTokenRepository.delete(refreshTokenEntity);
             }
+            log.debug("refresh token is null");
+            return null;
         }
         return createAccessTokenFromMemberId(refreshTokenEntity.getId());
     }

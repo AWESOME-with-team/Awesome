@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -37,4 +38,11 @@ public class RefreshTokenEntity {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime expire_date;
+
+    public boolean isExpired() {
+        if (expire_date == null) {
+            return false;
+        }
+        return expire_date.isBefore(LocalDateTime.now());
+    }
 }

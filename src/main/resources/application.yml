@@ -24,6 +24,6 @@ springdoc:
 
 logging:
   level:
-    com.acorn.finals: DEBUG
+    com.be.whereu: DEBUG
     org.springframework.web: INFO
 

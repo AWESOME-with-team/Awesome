@@ -3,12 +3,15 @@ package com.be.whereu.controller;
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
+import com.be.whereu.model.dto.TokenRequest;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.RefreshTokenEntity;
 import com.be.whereu.repository.RefreshTokenRepository;
 import com.be.whereu.service.JwtService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -21,84 +24,51 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping("/api")
 public class TokenController {
+    private static final Logger log = LoggerFactory.getLogger(TokenController.class);
     private final JwtService jwtService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    /**
-     * access token 검증
-     *
-     * @param accessTokenJws
-     * @return
-     */
-
-    @PostMapping("/access-validation")
-    public ResponseEntity<Void> accessTokenValidation(String accessTokenJws) {
-        WhereUJwt accessToken = WhereUJwt.fromJwt(accessTokenJws, tokenPropertiesConfig.getAccessToken().getSecret());
-        if (accessToken != null && !accessToken.isExpired()) {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
 
     /**
-     * refresh-token 검증
-     *
-     * @param refreshTokenJws
-     * @return
+     * 
+     * @return access 가 유효검사 필터에서 통과시 200번 응답
      */
-    @PostMapping("/refresh-validation")
-    public ResponseEntity<Void> refreshTokenValidation(String refreshTokenJws) {
-        RefreshTokenEntity refreshToken = refreshTokenRepository.findByToken(refreshTokenJws);
-        if (refreshToken != null) {
-//            boolean isExpired = refreshToken.getExpire_date().isBefore(LocalDateTime.now());
-//            if (isExpired) {
-//                int isDelete = refreshTokenRepository.removeByToken(refreshTokenJws);
-//                if (isDelete > 0) {
-//                    return ResponseEntity.status(HttpStatus.OK).build();
-//                } else {
-//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//                }
-//            } else {
-//                 refreshAccessToken(refreshTokenJws);
-//            }
-
-            System.out.println("이건 되나연");
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-            System.out.println("실패");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    @GetMapping("/access")
+    public ResponseEntity<String> myMember(){
+        log.info("access 200 response ");
+        return ResponseEntity.status(HttpStatus.OK).body("vaild accessToken");
     }
-
 
     /**
      * accessToken refreshToken으로 재발급
      *
-     * @param refreshToken
+     * @param tokenRequest
      * @return
      */
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshAccessToken(String refreshToken) {
-        String accessToken = jwtService.createAccessTokenFromRefreshToken(refreshToken);
+    public ResponseEntity<String> refreshAccessToken(@RequestBody TokenRequest tokenRequest) {
+        log.info("refresh access 200 response ");
+        String accessToken = jwtService.createAccessTokenFromRefreshToken(tokenRequest.getRefreshJws());
+        log.info("refreshJws:{}", tokenRequest.getRefreshJws());
         if (accessToken == null) {
+            log.debug("access token from refresh is null");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         ResponseCookie AccessTokenCookie = ResponseCookie
-                .from("access", accessToken)
+                .from("access-token", accessToken)
                 .httpOnly(true) //자바스크립트 접근 금지
                 .path("/")
                 .maxAge(tokenPropertiesConfig.getAccessToken().getExpiration())
                 .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, AccessTokenCookie.toString()).build();
+        return ResponseEntity.ok().
+                header(HttpHeaders.SET_COOKIE, AccessTokenCookie.toString())
+                .body(accessToken);
     }
-
 
     /**
      * 로그아웃시  refreshToken 삭제

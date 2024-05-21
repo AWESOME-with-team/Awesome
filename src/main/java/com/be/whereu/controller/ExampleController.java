@@ -8,13 +8,19 @@ import com.be.whereu.service.JwtService;
 import com.univcert.api.UnivCert;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 
+@Slf4j
 @RestController
 //생성자주입
 @RequiredArgsConstructor
@@ -35,6 +41,26 @@ public class ExampleController {
         return "ok";
 
     }
+    @GetMapping("/test3")
+    public  ResponseEntity<String>  test3(){
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("TEST2");
+
+    }
+
+    @GetMapping("/test2")
+    public ResponseEntity<String> test2(Authentication authentication){
+//        System.out.println("Access Token: " + accessToken);
+//        System.out.println("Refresh Token: " + refreshToken);
+
+
+
+        OAuth2User user = (OAuth2User) authentication.getPrincipal();
+        Map<String, Object> attributes = user.getAttributes();
+        System.out.println("email from attributes = "  + attributes.get("e") );
+        return ResponseEntity.status(HttpStatus.CREATED).body("TEST2");
+    }
+
     @GetMapping("/input")
     public String input(){
         return "ok";

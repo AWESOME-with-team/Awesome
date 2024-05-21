@@ -31,7 +31,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/v3/api-docs/**",
             "/api/**",
-            "/room/**"
+            "/room/**",
             };
 
     @Bean
@@ -42,8 +42,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth
                         .requestMatchers(whiteList).permitAll()
-                        .requestMatchers("/input").hasAnyRole("GUEST","USER")
-                        //.requestMatchers("/**").hasRole("USER")
                         .anyRequest().permitAll()
 
         );
