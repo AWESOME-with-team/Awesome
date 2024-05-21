@@ -1,13 +1,9 @@
 package com.be.whereu.filter;
 
-
-
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.repository.RefreshTokenRepository;
 import com.be.whereu.service.JwtService;
-
-import com.univcert.api.UnivCert;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -30,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,5 +80,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("contextHolder에 저장된 정보 : " + authentication.getName());
+        filterChain.doFilter(request, response);
     }
 }

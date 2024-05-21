@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script>
+        const stompClient = new StompJs.Client({
+            brokerURL: 'ws://localhost:9000/ws'
+        });
+
+        stompClient.onConnect = (frame) => {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/public', () => {
+                console.log('subscribed /topic/public')
+            });
+        };
+
+        stompClient.onWebSocketError = (error) => {
+            console.error('Error with websocket', error);
+        };
+
+        stompClient.onStompError = (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+        };
+
+
+        function connect() {
+            console.log('activating stomp client...')
+            stompClient.activate();
+        }
+
+        function disconnect() {
+            stompClient.deactivate();
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            console.log("Send button clicked!");
+
+            const sender = document.getElementById("sender").value;
+            const content = document.getElementById("content").value;
+            const chatId = document.getElementById("chatId").value;
+
+            console.log("sender is "  + sender);
+            console.log("content is " + content);
+            console.log("chatID is " + chatId);
+            stompClient.publish({
+                destination: "/app/chat.sendMessage",
+                body: JSON.stringify({ sender, content, chatId })
+            });
+        }
+
+        connect();
+    </script>
+</head>
+<body>
+<div>
+    <input type="text" id="sender" placeholder="Your email"/>
+    <input type="text" id="content" placeholder="Your message"/>
+    <input type="hidden" id="chatId" value="1"/>
+    <button onclick="sendMessage()">Send</button>
+</div>
+<div id="messages"></div>
+</body>
+</html>
