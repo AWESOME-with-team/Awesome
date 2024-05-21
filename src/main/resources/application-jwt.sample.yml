@@ -1,0 +1,10 @@
+token:
+  register-token:
+    secret: whereURegister-whereURegisterwhereURegisterwhereURegister
+    expiration: 864000
+  access-token:
+    secret: whereUAccesswhereUAccess-whereUAccesswhereURegister
+    expiration: 3600
+  refresh-token:
+    secret: whereURefreshwhereURefreshwhereURefresh-whereURegister
+    expiration: 864000

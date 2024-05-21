@@ -8,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -22,22 +24,20 @@ import java.util.Map;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
 
-    private static final String URI = "/auth/success";
+    private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        // user 안에 getAttribute가 있음
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
-        Map<String,Object> attributes = user.getAttributes();
-        // System.out.println("test:"+attributes);
-        String email=(String)attributes.get("email");
+        Map<String, Object> attributes = user.getAttributes();
+        String email = (String) attributes.get("email");
         System.out.println(email);
 
         MemberEntity memberEntity = memberRepository.findByEmail(email);
-        if(memberEntity==null) { // 정보가 존재하지 않음
+        if (memberEntity == null) { // 정보가 존재하지 않음
             //member객체를 생성해서 email 담아주기
             MemberEntity member = new MemberEntity();
             member.setEmail(email);
@@ -46,20 +46,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             MemberEntity savedMember=memberRepository.save(member);
             Long memberId= savedMember.getId();
 
-            String accessJws = jwtService.createAccessTokenFromMemberId(memberId);
-            Cookie AccessCookie = new Cookie("access", accessJws);
-            AccessCookie.setHttpOnly(true);// 자바스크립트 접근 금지
-            AccessCookie.setPath("/");// 모든 경로에서 쿠키 사용가능
-            response.addCookie(AccessCookie);
-
-
 
             //AccessToken 쿠키등록
             String refreshJws = jwtService.createRefreshTokenFromMemberId(memberId);
-            Cookie refreshCookie = new Cookie("refresh", refreshJws);
-            refreshCookie.setHttpOnly(true);
-            refreshCookie.setPath("/");
-            response.addCookie(refreshCookie);
+
 
 
         } else { // 존재하는 경우
@@ -67,7 +57,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             Long memberId= memberEntity.getId();
             //refreshToken 쿠키등록
             String accessJws = jwtService.createAccessTokenFromMemberId(memberId);
-            Cookie AccessCookie = new Cookie("access", accessJws);
+            log.debug("AccessJws:{}",accessJws);
+            Cookie AccessCookie = new Cookie("access-token", accessJws);
             AccessCookie.setHttpOnly(true);// 자바스크립트 접근 금지
             AccessCookie.setPath("/");// 모든 경로에서 쿠키 사용가능
             response.addCookie(AccessCookie);
@@ -75,18 +66,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             //AccessToken 쿠키등록
             String refreshJws = jwtService.createRefreshTokenFromMemberId(memberId);
-            Cookie refreshCookie = new Cookie("refresh", refreshJws);
+            Cookie refreshCookie = new Cookie("refresh-token", refreshJws);
             refreshCookie.setHttpOnly(true);
             refreshCookie.setPath("/");
             response.addCookie(refreshCookie);
-
-
-
+            response.sendRedirect("http://172.18.40.255:9000/test3");
         }
-
-
-
 
 
     }
 }
+
