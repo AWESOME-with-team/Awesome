@@ -5,20 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity,Long> {
-
-
-    @Query("SELECT rt FROM RefreshTokenEntity rt WHERE rt.token = :token")
-    public RefreshTokenEntity findByToken(@Param("token") String token);
-
-    @Query("SELECT rt FROM RefreshTokenEntity rt WHERE rt.email = :email")
-    RefreshTokenEntity findByEmail(@Param("email") String email);
-
-    @Modifying
-    @Query("DELETE  FROM RefreshTokenEntity rt WHERE rt.email = :email")
-    public int removeByToken(@Param("email") String email);
-
-
+    @Query("SELECT rt FROM RefreshTokenEntity rt LEFT JOIN FETCH rt.member m WHERE rt.token = :token")
+    RefreshTokenEntity findByTokenWithMember(@Param("token") String token);
+    int deleteByToken(String token);
+    RefreshTokenEntity findByMemberId(Long memberId);
 
 }

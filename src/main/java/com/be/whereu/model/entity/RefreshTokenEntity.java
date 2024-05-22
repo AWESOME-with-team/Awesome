@@ -30,14 +30,19 @@ import java.util.Date;
 public class RefreshTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-    private String email;
+    @Column(name = "member_id", insertable = false, updatable = false)
+    private Long memberId;
     private String token;
+    @Column(name= "is_email_exist")
+    private boolean isEmailExist;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime expire_date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    private MemberEntity member;
 
     public boolean isExpired() {
         if (expire_date == null) {

@@ -38,7 +38,6 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
     private long registerExpiration;
     private String accessSecret;
     private long accessExpiration;
-    private SecretKey secretKey;
 
 
 
@@ -64,11 +63,12 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
     }
 
 
-    public String createAccessTokenFromMemberId(Long memberId){
+    public String createAccessTokenFromMemberId(Long memberId , boolean universityEmail){
         SecretKey secretKey=Keys.hmacShaKeyFor(accessSecret.getBytes(StandardCharsets.UTF_8));
         long currentMs=System.currentTimeMillis();
         return Jwts.builder()
                 .subject(memberId.toString())
+                .claim("isEmailExist", universityEmail)
                 .expiration(new Date(currentMs+1000*accessExpiration))
                 .signWith(secretKey)
                 .issuedAt(new Date(currentMs))
@@ -77,13 +77,13 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
 
     /**
      * email 로 refreshToken 삭제  logout 시에 삭제
-     * @param email
+     * @param refreshJws
      * @return
      */
-    public boolean deleteRefreshTokenByemail(String email){
+    public boolean deleteRefreshTokenByemail(String refreshJws){
         boolean isSuccess=false;
 
-        int result = refreshTokenRepository.removeByToken(email);
+        int result = refreshTokenRepository.deleteByToken(refreshJws);
 
         if(result>0){
             isSuccess=true;
@@ -101,17 +101,19 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
      */
     @Transactional
     public String createAccessTokenFromRefreshToken(String refreshJws){
-        RefreshTokenEntity refreshTokenEntity= refreshTokenRepository.findByToken(refreshJws);
+        RefreshTokenEntity refreshTokenEntity= refreshTokenRepository.findByTokenWithMember(refreshJws);
         if(refreshTokenEntity==null || refreshTokenEntity.isExpired()){
 
             if (refreshTokenEntity != null) {
                 log.debug("refresh token expired");
-                refreshTokenRepository.delete(refreshTokenEntity);
+                refreshTokenRepository.deleteByToken(refreshJws);
+                log.info("refresh token delete");
             }
             log.debug("refresh token is null");
             return null;
         }
-        return createAccessTokenFromMemberId(refreshTokenEntity.getId());
+        boolean isEmailExist = refreshTokenEntity.getMember().getUniversityEmail() != null;
+        return createAccessTokenFromMemberId(refreshTokenEntity.getId(),isEmailExist);
     }
 
     /**
@@ -127,12 +129,12 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
 
         RefreshTokenEntity entity= new RefreshTokenEntity();
         entity.setId(memberId);
-        entity.setEmail(memberentity.getEmail());
+        entity.setId(memberentity.getId());
         entity.setToken(UUID.randomUUID().toString());
         entity.setExpire_date(LocalDateTime.now().plusSeconds(tokenPropertiesConfig.getRefreshToken().getExpiration()));
 
 
-        RefreshTokenEntity existingToken = refreshTokenRepository.findByEmail(memberentity.getEmail());
+        RefreshTokenEntity existingToken = refreshTokenRepository.findByMemberId(memberentity.getId());
         if(existingToken!=null){
 
             //refreshTokenRepository.save(entity); //  update

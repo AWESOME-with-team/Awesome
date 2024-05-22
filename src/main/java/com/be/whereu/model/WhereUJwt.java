@@ -25,8 +25,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Getter
+@Slf4j
 public class WhereUJwt {
-    private static final Logger log = LoggerFactory.getLogger(WhereUJwt.class);
+
     private String issuer;
     private String subject;
     private Set<String> audience;
@@ -34,6 +35,7 @@ public class WhereUJwt {
     private Date notBefore;
     private Date issuedAt;
     private String jwtId;
+    private Boolean isEmailExist;
     private Boolean isExpired;
 
     // 서명 키
@@ -61,6 +63,7 @@ public class WhereUJwt {
 
 
         return WhereUJwt.builder()
+                .isEmailExist(claims.get("isEmailExist", boolean.class))
                 .issuer(claims.getIssuer())
                 .subject(claims.getSubject())
                 .audience(claims.getAudience())

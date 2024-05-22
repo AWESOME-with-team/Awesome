@@ -8,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class MemberServiceImpl implements MemberSerivce{
+    private static final Logger log = LoggerFactory.getLogger(MemberServiceImpl.class);
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
@@ -34,9 +37,10 @@ public class MemberServiceImpl implements MemberSerivce{
             entity.setBirth(dto.getBirth());
 
             long memberId = dto.getId();
-
+            log.info("isUniversityEmail is: {}",  memberEntity.get().getUniversityEmail());
+            boolean isEmailExist = memberEntity.get().getUniversityEmail() != null;
             //refreshToken 쿠키등록
-            String accessJws = jwtService.createAccessTokenFromMemberId(memberId);
+            String accessJws = jwtService.createAccessTokenFromMemberId(memberId, isEmailExist);
             Cookie AccessCookie = new Cookie("access", accessJws);
 
             AccessCookie.setHttpOnly(true);// 자바스크립트 접근 금지

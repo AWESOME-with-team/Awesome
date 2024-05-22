@@ -36,13 +36,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = {"/api/refresh", "/login","/test","/test3"};
+        String[] excludePath = {"/api/refresh", "/login","/api/login","/api/login/success","/api/login/fail"};
         String path = request.getRequestURI();
         log.info(path);
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
@@ -76,12 +74,17 @@ public class JwtFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             filterChain.doFilter(request, response);
             return;
+        }else{
+            //AccessToken 이 존재하고 유효기간이 안지난경우
+            String memberId= accessToken.getSubject();
+            log.info("memberId:{} ",memberId);
+            UserDetails ud = new User(memberId,"",List.of());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(ud,null,ud.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
-        filterChain.doFilter(request, response);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("contextHolder에 저장된 정보 : " + authentication.getName());
         filterChain.doFilter(request, response);
     }
 }
