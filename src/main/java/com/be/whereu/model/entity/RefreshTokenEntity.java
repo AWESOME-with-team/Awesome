@@ -21,8 +21,8 @@ import java.util.Date;
         name = "refresh_token",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "refresh_email_unique",
-                        columnNames = {"email"}
+                        name = "refresh_member_id_unique",
+                        columnNames = {"member_id"}
                 )
         }
 
