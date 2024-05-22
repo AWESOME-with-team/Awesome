@@ -8,6 +8,7 @@ import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.RefreshTokenEntity;
 import com.be.whereu.repository.RefreshTokenRepository;
 import com.be.whereu.service.JwtService;
+import com.be.whereu.service.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,17 +29,22 @@ public class TokenController {
     private static final Logger log = LoggerFactory.getLogger(TokenController.class);
     private final JwtService jwtService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenService tokenService;
 
 
     /**
      * 
-     * @return access 가 유효검사 필터에서 통과시 200번 응답
+     * @return access 가 유효검사 필터에서 통과시 200번 응답 대학 email 없을시 201번응답
      */
     @GetMapping("/access")
-    public ResponseEntity<String> myMember(){
+    public ResponseEntity<String> myMember(@RequestHeader("access-token") String accessJws){
+        log.info("accessJws: {}", accessJws);
+        if(tokenService.checkUniversityEmailFromToken(accessJws)){
+            log.info("access 201 response ");
+            return ResponseEntity.status(HttpStatus.CREATED).body("you need university email");
+        }
         log.info("access 200 response ");
-        return ResponseEntity.status(HttpStatus.OK).body("vaild accessToken");
+        return ResponseEntity.status(HttpStatus.OK).body("valid accessToken");
     }
 
     /**
@@ -50,14 +55,13 @@ public class TokenController {
      */
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshAccessToken(@RequestBody TokenRequest tokenRequest) {
-        log.info("refresh access 200 response ");
         String accessToken = jwtService.createAccessTokenFromRefreshToken(tokenRequest.getRefreshJws());
         log.info("refreshJws:{}", tokenRequest.getRefreshJws());
         if (accessToken == null) {
-            log.debug("access token from refresh is null");
+            log.debug("access token from refresh is null 401 response");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
+        log.info("refresh access 200 response ");
         ResponseCookie AccessTokenCookie = ResponseCookie
                 .from("access-token", accessToken)
                 .httpOnly(true) //자바스크립트 접근 금지
@@ -70,22 +74,5 @@ public class TokenController {
                 .body(accessToken);
     }
 
-    /**
-     * 로그아웃시  refreshToken 삭제
-     *
-     * @param email
-     * @return
-     */
-    @Transactional
-    @DeleteMapping("/refresh")
-    public ResponseEntity<Void> deleteRefreshToken(@CookieValue("refresh") String email) {
 
-        boolean isDeleted = jwtService.deleteRefreshTokenByemail(email);
-        if (isDeleted) {
-            return ResponseEntity.ok().build();
-        } else {
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
 }
