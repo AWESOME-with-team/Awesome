@@ -1,15 +1,9 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
-import com.be.whereu.model.WhereUJwt;
-import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.dto.TokenRequest;
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.RefreshTokenEntity;
-import com.be.whereu.repository.RefreshTokenRepository;
 import com.be.whereu.service.JwtService;
 import com.be.whereu.service.TokenService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,10 +30,6 @@ public class TokenController {
     @GetMapping("/access")
     public ResponseEntity<String> myMember(@RequestHeader("access-token") String accessJws){
         log.info("accessJws: {}", accessJws);
-        if(tokenService.checkUniversityEmailFromToken(accessJws)){
-            log.info("access 201 response ");
-            return ResponseEntity.status(HttpStatus.CREATED).body("you need university email");
-        }
         log.info("access 200 response ");
         return ResponseEntity.status(HttpStatus.OK).body("valid accessToken");
     }

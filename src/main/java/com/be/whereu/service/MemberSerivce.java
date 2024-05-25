@@ -10,4 +10,5 @@ import java.io.IOException;
 public interface MemberSerivce {
     public void update(MemberDto dto, HttpServletResponse response) throws IOException;
     public MemberDto getData(long memberId);
+    public Boolean findMemberNick(String nick);
 }
