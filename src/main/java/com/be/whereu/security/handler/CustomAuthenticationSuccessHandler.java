@@ -1,10 +1,7 @@
 package com.be.whereu.security.handler;
 
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.service.TokenService;
 import com.be.whereu.service.UserService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +22,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 
     private final UserService userService;
-    private final TokenService tokenService;
 
 
     @Override
@@ -37,7 +33,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         log.info("email is: {}",email);
 
         userService.checkAndJoinUser(email, response);
-        response.sendRedirect("http://172.18.40.255:9000/login/success");
+        response.sendRedirect("http://172.30.1.16:9000/login/success");
 
     }
 }

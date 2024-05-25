@@ -68,5 +68,17 @@ public class MemberServiceImpl implements MemberSerivce{
         return MemberDto.toDto(entity);
     }
 
+    @Override
+    public Boolean findMemberNick(String nick) {
+        boolean isNickExist = false;
+        MemberEntity entity= memberRepository.findByNick(nick);
+        if(entity != null) {
+            log.info("NickName is: {}", entity.getNick());
+            isNickExist = true;
+        }
+
+        return isNickExist;
+    }
+
 
 }

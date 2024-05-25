@@ -1,14 +1,16 @@
 package com.be.whereu.model.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class ChatDto {
-    private Integer channelId;
-    private Integer writerId;
-    private String chat;
+public class UniversityEmailResponseDto {
+    Integer status;
+    Integer code;
+    Boolean success;
+    String message;
 }

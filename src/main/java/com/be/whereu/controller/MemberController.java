@@ -36,5 +36,18 @@ public class MemberController {
         return "ok";
     }
 
+    /**
+     *
+     * @param nick
+     * @return nick 존재하면 true 존재하지 않으면 false
+     */
+    @GetMapping("/member/nick")
+    public ResponseEntity<Boolean> getMemberByNick(@RequestParam String nick) {
+
+        Boolean isNickExist = memberSerivce.findMemberNick(nick);
+        log.info("isNickExist: {}", isNickExist);
+        return  ResponseEntity.ok().body(isNickExist);
+    }
+
 
 }
