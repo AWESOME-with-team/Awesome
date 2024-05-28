@@ -24,7 +24,6 @@ public class MemberDto {
     private LocalDate birth;
     private String universityEmail;
     private String universityName;
-    private String universityMajor;
     private String createAt;
     private String modifiedAt;
 
@@ -40,7 +39,6 @@ public class MemberDto {
                 .nick(memberEntity.getNick())
                 .universityEmail(memberEntity.getUniversityEmail())
                 .universityName(memberEntity.getUniversityName())
-                .universityMajor(memberEntity.getUniversityMajor())
                 .createAt(formattingFromCreateDate(memberEntity))
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
 //                .GroupList(memberEntity.getGroupList())

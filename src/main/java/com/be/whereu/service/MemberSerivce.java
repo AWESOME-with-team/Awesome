@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 public interface MemberSerivce {
-    public void update(MemberDto dto, HttpServletResponse response) throws IOException;
+    public void update(MemberDto dto);
     public MemberDto getData(long memberId);
     public Boolean findMemberNick(String nick);
 }

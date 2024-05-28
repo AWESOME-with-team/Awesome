@@ -27,38 +27,8 @@ public class MemberServiceImpl implements MemberSerivce{
 
     @Transactional
     @Override
-    public void update(MemberDto dto, HttpServletResponse response) throws IOException {
+    public void update(MemberDto dto ) {
         Optional<MemberEntity> memberEntity = memberRepository.findById(dto.getId());
-        if(memberEntity.isPresent()) {
-            MemberEntity entity = memberEntity.get();
-            entity.setNick(dto.getNick());
-            entity.setUniversityName(dto.getUniversityName());
-            entity.setUniversityMajor(dto.getUniversityMajor());
-            entity.setBirth(dto.getBirth());
-
-            long memberId = dto.getId();
-            log.info("isUniversityEmail is: {}",  memberEntity.get().getUniversityEmail());
-            boolean isEmailExist = memberEntity.get().getUniversityEmail() != null;
-            //refreshToken 쿠키등록
-            String accessJws = jwtService.createAccessTokenFromMemberId(memberId, isEmailExist);
-            Cookie AccessCookie = new Cookie("access", accessJws);
-
-            AccessCookie.setHttpOnly(true);// 자바스크립트 접근 금지
-            AccessCookie.setPath("/");// 모든 경로에서 쿠키 사용가능
-            response.addCookie(AccessCookie);
-
-
-            //AccessToken 쿠키등록
-            String refreshJws = jwtService.createRefreshTokenFromMemberId(memberId);
-            Cookie refreshCookie = new Cookie("refresh", refreshJws);
-            refreshCookie.setHttpOnly(true);
-            refreshCookie.setPath("/");
-            response.addCookie(refreshCookie);
-            response.sendRedirect("http://localhost:9000/test");
-
-        }else{
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-        }
     }
 
     @Override
