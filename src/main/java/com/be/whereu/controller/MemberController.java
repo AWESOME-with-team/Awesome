@@ -30,9 +30,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberDto);
     }*/
 
-    @PostMapping("/member")
-    public String addMember(@RequestBody MemberDto memberDto, HttpServletResponse response) throws IOException {
-        memberSerivce.update(memberDto,response);
+    @PostMapping("/member/update")
+    public String addMember(@RequestBody MemberDto memberDto) throws IOException {
+        memberSerivce.update(memberDto);
         return "ok";
     }
 

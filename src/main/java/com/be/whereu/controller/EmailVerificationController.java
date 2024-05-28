@@ -28,16 +28,13 @@ public class EmailVerificationController {
      * @throws IOException
      */
 
-    @PostMapping("/code_to_email")
-    public Boolean sendCode(@RequestBody UniversityEmaiRequestlDto dto) throws IOException {
-
-            Map<String,Object> response=UnivCert.certify(univPropertiesConfig.getUnivKey(),
-                    dto.getEmail(),
-                    dto.getUniversityName(),
-                    true);
+    @PostMapping("/university/email")
+    public Boolean sendEmail(@RequestBody UniversityEmaiRequestlDto dto) throws IOException {
 
 
-        return (Boolean) response.get("success");
+
+
+        return emailVerificationService.sendEmailFromUniNameAndEmail(dto);
 
 
 
@@ -56,56 +53,13 @@ public class EmailVerificationController {
 
     /**
      * 인증번호 확인
-     * @param email
-     * @param universityName
-     * @param code
+     * @param
      * @return
      * @throws IOException
      */
-    @PostMapping("/code_to_verification")
-    public String sendCode(String email, String universityName,int code) throws IOException {
-        Map<String, Object> response = UnivCert.certifyCode(univPropertiesConfig.getUnivKey(),
-                email,
-                universityName,
-                code);
-
-        // objectMapper를 통해서 상태를 받아온 status를 json으로 변환해준다.
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "서버 에러";
-        }
-
-        return json;
-
+    @PostMapping("/university/code")
+    public Boolean sendEmailWithCode(@RequestBody UniversityEmaiRequestlDto dto) throws IOException {
+        return emailVerificationService.verifyEmailCode(dto);
     }
 
-    /**
-     * 인증된 특정 이메일 기록 삭제
-     * @param email
-     * @return
-     * @throws IOException
-     */
-    @PostMapping("/delete_to_email")
-    public String deleteEmail(String email) throws IOException {
-        Map<String,Object> response=UnivCert.clear(univPropertiesConfig.getUnivKey(),
-                email);
-
-        // objectMapper를 통해서 상태를 받아온 status를 json으로 변환해준다.
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 예외 처리 코드 작성
-            return "서버 에러";
-        }
-
-        return json;
-
-    }
 }

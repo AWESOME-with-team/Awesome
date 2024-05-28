@@ -43,8 +43,6 @@ public class MemberEntity extends BaseEntity {
     private String universityEmail;
     @Column(name= "u_Name")
     private String universityName;
-    @Column(name= "u_major")
-    private String universityMajor;
     @OneToMany(mappedBy = "member" ,cascade = CascadeType.ALL, orphanRemoval = true )
     private List<MemberGroupEntity> GroupList;
     @Transient
@@ -62,7 +60,6 @@ public class MemberEntity extends BaseEntity {
                 .birth(dto.getBirth())
                 .universityEmail(dto.getUniversityEmail())
                 .universityName(dto.getUniversityName())
-                .universityMajor(dto.getUniversityMajor())
 //                .GroupList(dto.getGroupList())
 //                .school(dto.getSchool())
 //                .chatList(dto.getChatList())
