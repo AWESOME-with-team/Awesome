@@ -1,6 +1,7 @@
 package com.be.whereu.model.entity;
 
 
+import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.isMatch;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,4 +32,14 @@ public class GroupEntity extends BaseEntity{
     private isMatch isMatch;
     @OneToMany(mappedBy = "group")
     private List<MemberGroupEntity> memberGroup;
+
+    public static GroupEntity toGroupEntity(GroupDto dto){
+        return GroupEntity.builder()
+                .id(dto.getId())
+                .hostId(dto.getHostId())
+                .groupName(dto.getGroupName())
+                .groupLoc(dto.getGroupLoc())
+                .gender(dto.getGender())
+                .build();
+    }
 }
