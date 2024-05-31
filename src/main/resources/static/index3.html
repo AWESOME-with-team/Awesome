@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat</title>
+    <style>
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        #messages div {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Group Chat</h1>
+<div>
+    <label for="nick">Nickname:</label>
+    <input type="text" id="nick">
+</div>
+<div>
+    <label for="message">Message:</label>
+    <input type="text" id="message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+<div id="messages"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="app2.js"></script>
+</body>
+</html>

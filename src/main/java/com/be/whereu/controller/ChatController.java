@@ -1,19 +1,21 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.model.ChatMessage;
-import com.be.whereu.model.entity.ChatEntity;
 import com.be.whereu.model.entity.MessageEntity;
 import com.be.whereu.repository.ChatMemberRepository;
 import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
 
     @Autowired
@@ -24,8 +26,11 @@ public class ChatController {
 
     @Autowired
     private MemberRepository memberRepository;
-    
 
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @MessageMapping("/chat.sendMessage")
@@ -57,6 +62,26 @@ public class ChatController {
                 .chat(chat)
                 .build();
         messageRepository.save(message);
+        return chatMessage;
+    }
+
+    @MessageMapping("/group/{chatId}/sendMessage")
+    @SendTo("/topic/group/{chatId}")
+    public ChatMessage sendMessage(@PathVariable Long chatId, ChatMessage chatMessage) {
+        // 메시지를 데이터베이스에 저장
+        var sender = memberRepository.findByEmail(chatMessage.getSender());
+        var chat = chatRepository.findById(Long.valueOf(chatMessage.getChatId()))
+                .orElseThrow();
+        var message = MessageEntity.builder()
+                .member(sender)
+                .content(chatMessage.getContent())
+                .chat(chat)
+                .build();
+        messageRepository.save(message);
+
+        // 모든 그룹 멤버에게 메시지 전송
+        messagingTemplate.convertAndSend("/topic/group/" + chatId, chatMessage);
+
         return chatMessage;
     }
 }
