@@ -27,7 +27,6 @@ public class EmailVerificationController {
      * @return
      * @throws IOException
      */
-
     @PostMapping("/university/email")
     public Boolean sendEmail(@RequestBody UniversityEmaiRequestlDto dto) throws IOException {
 
