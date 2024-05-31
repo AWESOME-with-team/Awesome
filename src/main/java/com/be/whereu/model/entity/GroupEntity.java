@@ -22,26 +22,24 @@ public class GroupEntity extends BaseEntity{
     private Long id;
     @Column(name = "host_id")
     private Long hostId;
-    private int total;  
+    private int total;
     @Column(name = "g_name")
     private String groupName;
     @Column(name = "g_loc")
     private String groupLoc;
     private String gender;
     @Enumerated(EnumType.STRING)
-    private isMatch ismatch;
+    private isMatch isMatch;
     @OneToMany(mappedBy = "group")
     private List<MemberGroupEntity> memberGroup;
 
-    public static GroupEntity toEntity(GroupDto dto) {
+    public static GroupEntity toGroupEntity(GroupDto dto){
         return GroupEntity.builder()
                 .id(dto.getId())
                 .hostId(dto.getHostId())
-                .total(dto.getTotal())
                 .groupName(dto.getGroupName())
                 .groupLoc(dto.getGroupLoc())
                 .gender(dto.getGender())
-                .ismatch(isMatch.valueOf(dto.getIsMatch()))
                 .build();
     }
 }

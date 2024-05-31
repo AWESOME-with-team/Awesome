@@ -7,27 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class GroupDto {
     private Long id;
-    private Long hostId;
-    private int total;
     private String groupName;
     private String groupLoc;
     private String gender;
-    private String isMatch;
+    private Long hostId;
 
-    public static GroupDto toDto(GroupEntity entity) {
+    public static GroupDto toDto(GroupEntity groupEntity) {
         return GroupDto.builder()
-                .id(entity.getId())
-                .hostId(entity.getHostId())
-                .total(entity.getTotal())
-                .groupName(entity.getGroupName())
-                .groupLoc(entity.getGroupLoc())
-                .gender(entity.getGender())
-                .isMatch(entity.getIsmatch().name())
+                .id(groupEntity.getId())
+                .groupName(groupEntity.getGroupName())
+                .groupLoc(groupEntity.getGroupLoc())
+                .gender(groupEntity.getGender())
+                .hostId(groupEntity.getHostId())
                 .build();
     }
 }
