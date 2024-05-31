@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello WebSocket</title>
+    <title>WebSocket Chat</title>
     <link href="/main.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
@@ -10,9 +10,9 @@
     <script src="app.js"></script>
 </head>
 <body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
+<noscript>
+    <h2 style="color: #ff0000">It seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2>
+</noscript>
 <div id="main-content" class="container">
     <div class="row">
         <div class="col-md-6">
@@ -20,19 +20,24 @@
                 <div class="form-group">
                     <label for="connect">WebSocket connection:</label>
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
                 </div>
             </form>
         </div>
         <div class="col-md-6">
-        <div class="col-md-6">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="name">What is your name?</label>
-                    <input type="text" id="name" class="form-control" placeholder="Your name here...">
+                    <label for="directMessage">Direct Message:</label>
+                    <input type="text" id="directMessage" class="form-control" placeholder="Enter direct message...">
                 </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
+                <button id="sendDirectMessage" class="btn btn-default" type="submit">Send</button>
+            </form>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="groupMessage">Group Message:</label>
+                    <input type="text" id="groupMessage" class="form-control" placeholder="Enter group message...">
+                </div>
+                <button id="sendGroupMessage" class="btn btn-default" type="submit">Send</button>
             </form>
         </div>
     </div>
@@ -41,7 +46,7 @@
             <table id="conversation" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Greetings</th>
+                    <th>Messages</th>
                 </tr>
                 </thead>
                 <tbody id="greetings">
