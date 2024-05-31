@@ -5,12 +5,14 @@ import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/swagger-ui/index.html", "/swagger-ui/swagger-ui.css", "/v3/api-docs", //swagger
                 "/api/refresh", "/login", "/api/login", "/api/login/success", "/api/login/fail","/api/university/code","/api/university/email",
                 "/api/member/nick", "/api/university/check","/api/member/update" // Corrected path
+//                ,"/index2.html","/ws"
         };
         String path = request.getRequestURI();
         log.info(path);
@@ -51,16 +54,29 @@ public class JwtFilter extends OncePerRequestFilter {
         String refreshJws = request.getHeader("refresh-token");
         log.info("accessJws:{} " ,accessJws);
         log.info("refreshJws:{} ",refreshJws);
+        if(accessJws == null && refreshJws == null) {
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null) {
+                for(Cookie cookie : cookies) {
+                    if(cookie.getName().equals("access-token")) {
+                        accessJws = cookie.getValue();
+                    }else if(cookie.getName().equals("refresh-token")) {
+                        refreshJws = cookie.getValue();
+                    }
+                }
+            }
+        }
         //access 와 refresh 없을떄 404 번 응답코드
         if (isNotExistToken(accessJws, refreshJws, response, filterChain, request)) return;
         WhereUJwt accessToken = tokenService.validateAccessTokenAndToMakeObjectJwt(accessJws);
         //access 유효기간 만료 시 동작 혹은 잘못된 accessJws 요청시 401 응답
         log.debug("accessToken:{} ",accessToken);
-        if (isInvalidAccessToken(accessToken, response, filterChain, request)) return;
+        //if (isInvalidAccessToken(accessToken, response, filterChain, request)) return;
         //필수 이메일이 존재하지 않으면 201번
-        if(isNotTokenExistUniEmail(accessJws,response,filterChain,request)) return;
+        //if(isNotTokenExistUniEmail(accessJws,response,filterChain,request)) return;
         //모든 access 유효성 검사 통과시 context 주입
         securityContextManager.setUpSecurityContext(accessToken, request);
+        log.info("contextHolder in {}" ,SecurityContextHolder.getContext().toString());
         filterChain.doFilter(request, response);
     }
 

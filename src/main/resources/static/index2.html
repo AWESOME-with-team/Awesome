@@ -11,8 +11,10 @@
 
         stompClient.onConnect = (frame) => {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/public', () => {
-                console.log('subscribed /topic/public')
+            const chatId = document.getElementById("chatId").value;
+            stompClient.subscribe(`/room/2`, (message) => {
+                console.log('Received message: ' + message.body);
+                showMessage(JSON.parse(message.body));
             });
         };
 
@@ -24,7 +26,6 @@
             console.error('Broker reported error: ' + frame.headers['message']);
             console.error('Additional details: ' + frame.body);
         };
-
 
         function connect() {
             console.log('activating stomp client...')
@@ -38,18 +39,20 @@
 
         function sendMessage() {
             console.log("Send button clicked!");
-
-            const sender = document.getElementById("sender").value;
             const content = document.getElementById("content").value;
             const chatId = document.getElementById("chatId").value;
-
-            console.log("sender is "  + sender);
             console.log("content is " + content);
             console.log("chatID is " + chatId);
             stompClient.publish({
-                destination: "/app/chat.sendMessage",
-                body: JSON.stringify({ sender, content, chatId })
+                destination: `/send/${chatId}`,
+                body: JSON.stringify({ content, chatId })
             });
+        }
+
+        function showMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message.content;
+            document.getElementById('messages').appendChild(messageElement);
         }
 
         connect();
@@ -57,11 +60,10 @@
 </head>
 <body>
 <div>
-    <input type="text" id="sender" placeholder="Your email"/>
     <input type="text" id="content" placeholder="Your message"/>
     <input type="hidden" id="chatId" value="1"/>
     <button onclick="sendMessage()">Send</button>
 </div>
-<div id="messages"></div>
+<div id="messages"> </div>
 </body>
 </html>
