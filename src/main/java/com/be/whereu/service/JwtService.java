@@ -128,8 +128,7 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
         MemberEntity memberentity = optionalEntity.get();
 
         RefreshTokenEntity entity= new RefreshTokenEntity();
-        entity.setId(memberId);
-        entity.setId(memberentity.getId());
+        entity.setMemberId(memberId);
         entity.setToken(UUID.randomUUID().toString());
         entity.setExpire_date(LocalDateTime.now().plusSeconds(tokenPropertiesConfig.getRefreshToken().getExpiration()));
 

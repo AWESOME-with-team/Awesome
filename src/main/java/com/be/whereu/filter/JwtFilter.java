@@ -28,20 +28,25 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] excludePath = {
-                "/swagger-ui/swagger-initializer.js","/swagger-ui/index.css","/swagger-ui/swagger-ui-bundle.js",
-                "/swagger-ui/swagger-ui-standalone-preset.js","/v3/api-docs/swagger-config"," /swagger-ui/swagger-ui-standalone-preset.js",
-                "/swagger-ui/index.html","/","/swagger-ui/swagger-ui.css","/v3/api-docs",//swagger
-                "/api/refresh", "/login","/api/login","/api/login/success","/api/login/fail",
-                "/api/member/nick","api/university/check"
+                "/swagger-ui/swagger-initializer.js", "/swagger-ui/index.css", "/swagger-ui/swagger-ui-bundle.js",
+                "/swagger-ui/swagger-ui-standalone-preset.js", "/v3/api-docs/swagger-config", "/swagger-ui/swagger-ui-standalone-preset.js",
+                "/swagger-ui/index.html", "/swagger-ui/swagger-ui.css", "/v3/api-docs", //swagger
+                "/api/refresh", "/login", "/api/login", "/api/login/success", "/api/login/fail","/api/university/code","/api/university/email",
+                "/api/member/nick", "/api/university/check","/api/member/update" // Corrected path
         };
         String path = request.getRequestURI();
         log.info(path);
-        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+//        boolean result = Arrays.stream(excludePath).anyMatch(exclude -> {
+//            boolean match = path.startsWith(exclude.trim());
+//            log.info("Comparing '{}' with '{}': {}", path, exclude, match);
+//            return match;
+//        });
+        return Arrays.stream(excludePath).anyMatch(exclude -> path.startsWith(exclude.trim())); // Change from false to result
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        System.out.println("왜 안와");
         String accessJws = request.getHeader("access-token");
         String refreshJws = request.getHeader("refresh-token");
         log.info("accessJws:{} " ,accessJws);
@@ -49,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
         //access 와 refresh 없을떄 404 번 응답코드
         if (isNotExistToken(accessJws, refreshJws, response, filterChain, request)) return;
         WhereUJwt accessToken = tokenService.validateAccessTokenAndToMakeObjectJwt(accessJws);
-        //access 유효기간 만료 시 동작 혹은 잘못된 accessJws 요청시 401 d응답
+        //access 유효기간 만료 시 동작 혹은 잘못된 accessJws 요청시 401 응답
         log.debug("accessToken:{} ",accessToken);
         if (isInvalidAccessToken(accessToken, response, filterChain, request)) return;
         //필수 이메일이 존재하지 않으면 201번
@@ -64,7 +69,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (accessJws == null || refreshJws == null) {
             log.debug("Access token or Refresh token is null");
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            filterChain.doFilter(request, response);
             return true;
         }
         return false;
@@ -74,12 +78,10 @@ public class JwtFilter extends OncePerRequestFilter {
         if (accessToken != null && accessToken.getIsExpired()) {
             log.debug("Access token is expired");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            filterChain.doFilter(request, response);
             return true;
         } else if (accessToken == null) {
             log.debug("Access token is null");
             response.setStatus(HttpStatus.FORBIDDEN.value());
-            filterChain.doFilter(request, response);
             return true;
         }
         return false;
@@ -89,7 +91,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if(!tokenService.isUniEmailExistFromToken(accessJws)){
             log.info("access 201 response ");
             response.setStatus(HttpStatus.CREATED.value());
-            filterChain.doFilter(request, response);
             return true;
         }
         return false;

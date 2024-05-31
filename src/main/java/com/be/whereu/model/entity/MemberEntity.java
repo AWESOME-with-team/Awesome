@@ -1,5 +1,6 @@
 package com.be.whereu.model.entity;
 
+import com.be.whereu.model.Gender;
 import com.be.whereu.model.dto.MemberDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +39,8 @@ public class MemberEntity extends BaseEntity {
     private String email;
     @Column(unique = true)
     private String nick;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     private LocalDate birth;
     @Column(name = "u_email")
     private String universityEmail;
@@ -60,6 +63,7 @@ public class MemberEntity extends BaseEntity {
                 .birth(dto.getBirth())
                 .universityEmail(dto.getUniversityEmail())
                 .universityName(dto.getUniversityName())
+                .gender(Gender.fromString(dto.getGender()))
 //                .GroupList(dto.getGroupList())
 //                .school(dto.getSchool())
 //                .chatList(dto.getChatList())

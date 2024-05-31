@@ -31,7 +31,7 @@ public class RefreshTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "member_id", insertable = false, updatable = false)
+    @Column(name = "member_id")
     private Long memberId;
     private String token;
     @Column(name= "is_email_exist")
@@ -41,7 +41,7 @@ public class RefreshTokenEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime expire_date;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
     private MemberEntity member;
 
     public boolean isExpired() {
