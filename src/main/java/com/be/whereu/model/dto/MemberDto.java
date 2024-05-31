@@ -26,6 +26,7 @@ public class MemberDto {
     private String universityName;
     private String createAt;
     private String modifiedAt;
+    private String gender;
 
 //    private List<MemberGroupEntity> GroupList;
 //    private SchoolEntity school;
@@ -41,6 +42,7 @@ public class MemberDto {
                 .universityName(memberEntity.getUniversityName())
                 .createAt(formattingFromCreateDate(memberEntity))
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
+                .gender(memberEntity.getGender().name())
 //                .GroupList(memberEntity.getGroupList())
 //                .school(memberEntity.getSchool())
 //                .chatList(memberEntity.getChatList())

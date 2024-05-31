@@ -63,7 +63,7 @@ public class WhereUJwt {
 
 
         return WhereUJwt.builder()
-                .isEmailExist(claims.get("isEmailExist", boolean.class))
+                .isEmailExist(claims.get("isEmailExist", Boolean.class))
                 .issuer(claims.getIssuer())
                 .subject(claims.getSubject())
                 .audience(claims.getAudience())
