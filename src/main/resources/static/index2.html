@@ -11,8 +11,8 @@
 
         stompClient.onConnect = (frame) => {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/public', () => {
-                console.log('subscribed /topic/public')
+            stompClient.subscribe('/topic/app', () => {
+                console.log('subscribed /topic/app')
             });
         };
 
@@ -24,7 +24,6 @@
             console.error('Broker reported error: ' + frame.headers['message']);
             console.error('Additional details: ' + frame.body);
         };
-
 
         function connect() {
             console.log('activating stomp client...')
@@ -47,7 +46,7 @@
             console.log("content is " + content);
             console.log("chatID is " + chatId);
             stompClient.publish({
-                destination: "/app/chat.sendMessage",
+                destination: "/app/group/{groupId}/sendMessage",
                 body: JSON.stringify({ sender, content, chatId })
             });
         }
