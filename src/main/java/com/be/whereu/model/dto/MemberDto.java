@@ -50,8 +50,7 @@ public class MemberDto {
                 .build();
 
     }
-
-
+    //git test
     public static String formattingFromCreateDate(MemberEntity memberEntity) {
         LocalDateTime createAt = memberEntity.getCreateAt();
         return createAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
