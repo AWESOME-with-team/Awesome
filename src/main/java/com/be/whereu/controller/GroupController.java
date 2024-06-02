@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,5 +29,20 @@ public class GroupController {
             return ResponseEntity.ok(true);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<GroupDto>> getAllGroups() {
+
+        List<GroupDto> groupList = groupService.getGroupList();
+        return ResponseEntity.ok(groupList);
+
+    }
+
+    @GetMapping("/detail/{groupId}")
+    public ResponseEntity<GroupDto> getGroupById(@PathVariable Long groupId) {
+
+        GroupDto groupDto = groupService.groupDetails(groupId);
+        return ResponseEntity.ok().body(groupDto);
     }
 }

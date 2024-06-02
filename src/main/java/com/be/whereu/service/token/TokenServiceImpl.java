@@ -1,4 +1,4 @@
-package com.be.whereu.service;
+package com.be.whereu.service.token;
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.WhereUJwt;

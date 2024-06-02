@@ -1,6 +1,7 @@
 package com.be.whereu.model.entity;
 
 
+import com.be.whereu.model.Gender;
 import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.isMatch;
 import jakarta.persistence.*;
@@ -27,7 +28,8 @@ public class GroupEntity extends BaseEntity{
     private String groupName;
     @Column(name = "g_loc")
     private String groupLoc;
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     @Enumerated(EnumType.STRING)
     private isMatch ismatch;
     @OneToMany(mappedBy = "group")
@@ -40,7 +42,7 @@ public class GroupEntity extends BaseEntity{
                 .total(dto.getTotal())
                 .groupName(dto.getGroupName())
                 .groupLoc(dto.getGroupLoc())
-                .gender(dto.getGender())
+                .gender(Gender.fromString(dto.getGender()))
                 .ismatch(isMatch.valueOf(dto.getIsMatch()))
                 .build();
     }

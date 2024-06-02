@@ -6,21 +6,14 @@ import com.be.whereu.model.Gender;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.SchoolEntity;
 import com.be.whereu.repository.MemberRepository;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import com.be.whereu.service.token.JwtService;
+import com.be.whereu.service.token.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.Console;
-import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor

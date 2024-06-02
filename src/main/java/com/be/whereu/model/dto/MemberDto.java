@@ -43,13 +43,13 @@ public class MemberDto {
                 .createAt(formattingFromCreateDate(memberEntity))
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
                 .gender(memberEntity.getGender().name())
+                .birth(memberEntity.getBirth())
 //                .GroupList(memberEntity.getGroupList())
 //                .school(memberEntity.getSchool())
 //                .chatList(memberEntity.getChatList())
                 .build();
 
     }
-
 
 
     public static String formattingFromCreateDate(MemberEntity memberEntity) {

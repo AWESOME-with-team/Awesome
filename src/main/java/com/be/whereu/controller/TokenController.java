@@ -2,8 +2,8 @@ package com.be.whereu.controller;
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.dto.TokenRequest;
-import com.be.whereu.service.JwtService;
-import com.be.whereu.service.TokenService;
+import com.be.whereu.service.token.JwtService;
+import com.be.whereu.service.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

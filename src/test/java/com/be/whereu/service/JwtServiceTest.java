@@ -6,6 +6,7 @@ import com.be.whereu.model.entity.RefreshTokenEntity;
 import com.be.whereu.model.property.TokenProperty;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.RefreshTokenRepository;
+import com.be.whereu.service.token.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

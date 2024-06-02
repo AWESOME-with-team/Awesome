@@ -1,4 +1,4 @@
-package com.be.whereu.service;
+package com.be.whereu.service.token;
 
 
 
@@ -7,7 +7,6 @@ import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.RefreshTokenEntity;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.RefreshTokenRepository;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import jakarta.annotation.PostConstruct;
@@ -15,9 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;

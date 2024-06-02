@@ -2,6 +2,7 @@ package com.be.whereu.service;
 
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.repository.MemberRepository;
+import com.be.whereu.service.token.TokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
