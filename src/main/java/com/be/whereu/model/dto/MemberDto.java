@@ -43,15 +43,14 @@ public class MemberDto {
                 .createAt(formattingFromCreateDate(memberEntity))
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
                 .gender(memberEntity.getGender().name())
+                .birth(memberEntity.getBirth())
 //                .GroupList(memberEntity.getGroupList())
 //                .school(memberEntity.getSchool())
 //                .chatList(memberEntity.getChatList())
                 .build();
 
     }
-
-
-
+    //git test
     public static String formattingFromCreateDate(MemberEntity memberEntity) {
         LocalDateTime createAt = memberEntity.getCreateAt();
         return createAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

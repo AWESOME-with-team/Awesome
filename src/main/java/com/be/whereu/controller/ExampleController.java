@@ -4,12 +4,11 @@ import com.be.whereu.model.dto.ExampleDto;
 
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.service.ExampleService;
-import com.be.whereu.service.JwtService;
+import com.be.whereu.service.token.JwtService;
 import com.univcert.api.UnivCert;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

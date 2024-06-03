@@ -11,10 +11,12 @@
 
         stompClient.onConnect = (frame) => {
             console.log('Connected: ' + frame);
+
             const chatId = document.getElementById("chatId").value;
             stompClient.subscribe(`/room/2`, (message) => {
                 console.log('Received message: ' + message.body);
                 showMessage(JSON.parse(message.body));
+
             });
         };
 
@@ -26,6 +28,7 @@
             console.error('Broker reported error: ' + frame.headers['message']);
             console.error('Additional details: ' + frame.body);
         };
+
 
         function connect() {
             console.log('activating stomp client...')
@@ -39,6 +42,7 @@
 
         function sendMessage() {
             console.log("Send button clicked!");
+
             const content = document.getElementById("content").value;
             const chatId = document.getElementById("chatId").value;
             console.log("content is " + content);
@@ -55,15 +59,19 @@
             document.getElementById('messages').appendChild(messageElement);
         }
 
+
         connect();
     </script>
 </head>
 <body>
 <div>
+
     <input type="text" id="content" placeholder="Your message"/>
     <input type="hidden" id="chatId" value="1"/>
     <button onclick="sendMessage()">Send</button>
 </div>
+
 <div id="messages"> </div>
+
 </body>
 </html>
