@@ -9,13 +9,17 @@ import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
 import com.be.whereu.service.ChatServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -24,6 +28,7 @@ import java.util.List;
 @Controller
 public class ChatController {
 
+    private static final Logger log = LoggerFactory.getLogger(ChatController.class);
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
@@ -47,15 +52,6 @@ public class ChatController {
         // 누가보냈는지 식별하기
         var sender = memberRepository.findById(memberId).orElseThrow();
 
-        // chatMemberRepository
-        ChatMemberEntity entity= ChatMemberEntity.builder()
-                .member(sender)
-                .chat(chat)
-                .build();
-        chatMemberRepository.save(entity);
-
-
-
 
         // sender가 chat 에 해당되는지 검증
         var message = MessageEntity.builder()
@@ -77,22 +73,29 @@ public class ChatController {
 
     @ResponseBody
     @PostMapping("/create/group/chat")
-    public ResponseEntity<Void> createGroupChat(List<Long> memberIds, Authentication authentication){
+    public ResponseEntity<Void> createGroupChat(@RequestBody List<Long> memberIds, Authentication authentication){
         chatService.createGroupChat(memberIds,authentication);
         return ResponseEntity.ok().build();
     }
 
+    //채팅방 초대 한명씩 추가 하는 api필요
+    @ResponseBody
+    @PostMapping("/addChatMember")
+    public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
+        chatService.addMemberChat(memberId,chatId);
+        return ResponseEntity.ok().build();
+    }
 
-//    @MessageMapping("/createDM/{receiverId}")
-//    @SendTo("/room/newChat")
-//    public ChatMessage createDMChat(@DestinationVariable("receiverId") Long receiverId, ChatMessage chatMessage, Authentication authentication) {
-//        // 새로운 DM 채팅방 생성 및 첫 메시지 전송 로직
-//        Long chatId = chatService.createDMChat(receiverId, authentication, chatMessage);
-//
-//        // chatMessage에 새로운 chatId 설정
-//        chatMessage.setChatId(String.valueOf(chatId));
-//
-//        return chatMessage;
-//    }
+    @ResponseBody
+    @DeleteMapping("/exitChat")
+    public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
+        boolean isSuccess=chatService.exitChat(memberId,chatId);
+        log.info("isSuccess {}",isSuccess);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
 
 }

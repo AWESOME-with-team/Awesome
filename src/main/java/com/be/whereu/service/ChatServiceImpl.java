@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class ChatServiceImpl implements ChatService {
      *
      */
     @Transactional
+    @Override
     public void createDmChat(Long receiverId, Authentication authentication){
         Long memberId = Long.parseLong(authentication.getName());
         MemberEntity member = memberRepository.findById(memberId).orElseThrow();
@@ -55,15 +57,24 @@ public class ChatServiceImpl implements ChatService {
      *
      */
     @Transactional
+    @Override
     public void createGroupChat(List<Long> memberIds, Authentication authentication){
-        Long memberId = Long.parseLong(authentication.getName());
+        Long ownerId = Long.parseLong(authentication.getName());
+        MemberEntity owner = memberRepository.findById(ownerId).orElseThrow();
 
         // 채팅방 생성
         ChatEntity chat = new ChatEntity();
-        chat.setRtype(Rtype.dm);
+        chat.setRtype(Rtype.group);
         chatRepository.save(chat);
 
-        for(Long memberid : memberIds){
+        // owner 추가
+        ChatMemberEntity chatMember2 = new ChatMemberEntity();
+        chatMember2.setMember(owner);
+        chatMember2.setChat(chat);
+        chatMemberRepository.save(chatMember2);
+
+        // group원들 추가
+        for(Long memberId : memberIds){
             //memberId로 member가져오기
             MemberEntity member = memberRepository.findById(memberId).orElseThrow();
 
@@ -73,6 +84,37 @@ public class ChatServiceImpl implements ChatService {
             chatMember.setChat(chat);
             chatMemberRepository.save(chatMember);
         }
+
+    }
+
+    /**
+     * 기존 채팅방 인원 초대
+     */
+    @Transactional
+    @Override
+    public void addMemberChat(Long memberId, Long chatId) {
+        MemberEntity member = memberRepository.findById(memberId).orElseThrow();
+        ChatEntity chat = chatRepository.findById(chatId).orElseThrow();
+        ChatMemberEntity chatMember = new ChatMemberEntity();
+        chatMember.setMember(member);
+        chatMember.setChat(chat);
+        chatMemberRepository.save(chatMember);
+
+    }
+    @Transactional
+    @Override
+    public boolean exitChat(Long memberId, Long chatId) {
+
+        // ChatMemberEntity 찾기
+        // Entity 삭제
+        Optional<ChatMemberEntity> chatMemberOptional =chatMemberRepository.findByMemberIdAndChatId(memberId, chatId);
+
+        if (chatMemberOptional.isPresent()) {
+            // Entity 삭제
+            chatMemberRepository.delete(chatMemberOptional.get());
+            return true;  // 성공적으로 삭제됨
+        }
+        return false;  // 해당 멤버가 채팅방에 없음
 
     }
 
