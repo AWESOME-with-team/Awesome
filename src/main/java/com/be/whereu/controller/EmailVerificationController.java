@@ -29,14 +29,7 @@ public class EmailVerificationController {
      */
     @PostMapping("/university/email")
     public Boolean sendEmail(@RequestBody UniversityEmaiRequestlDto dto) throws IOException {
-
-
-
-
         return emailVerificationService.sendEmailFromUniNameAndEmail(dto);
-
-
-
     }
 
     /**
