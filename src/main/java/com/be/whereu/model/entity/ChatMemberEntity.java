@@ -1,5 +1,6 @@
 package com.be.whereu.model.entity;
 
+import com.be.whereu.model.dto.ChatMemberDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,4 +21,18 @@ public class ChatMemberEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="chat_id",foreignKey = @ForeignKey(name="chat_member_fk"))
     private ChatEntity chat;
+
+
+    public static ChatMemberEntity toEntity(ChatMemberDto dto, MemberEntity member, ChatEntity chat) {
+        if (dto == null) {
+            return null;
+        }
+        return ChatMemberEntity.builder()
+                .id(dto.getId())
+                .member(member)
+                .chat(chat)
+                .build();
+    }
 }
+
+

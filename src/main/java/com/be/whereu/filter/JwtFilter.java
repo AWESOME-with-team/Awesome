@@ -2,8 +2,10 @@ package com.be.whereu.filter;
 
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.security.authentication.SecurityContextManager;
+
 import com.be.whereu.service.token.TokenService;
 import com.be.whereu.service.token.TokenValidatorService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -12,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,6 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final SecurityContextManager securityContextManager;
     private final TokenValidatorService tokenValidatorService;
 
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] excludePath = {
@@ -36,6 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/swagger-ui/index.html", "/swagger-ui/swagger-ui.css", "/v3/api-docs", //swagger
                 "/api/refresh", "/login", "/api/login", "/api/login/success", "/api/login/fail","/api/university/code","/api/university/email",
                 "/api/member/nick", "/api/university/check","/api/member/update" // Corrected path
+
         };
         String path = request.getRequestURI();
         log.info(path);
@@ -49,6 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
 
         extractTokensFromRequest(request);
         String accessJws = (String) request.getAttribute("accessJws");
@@ -91,5 +95,6 @@ public class JwtFilter extends OncePerRequestFilter {
         request.setAttribute("accessJws", accessJws);
         request.setAttribute("refreshJws", refreshJws);
     }
+
 
 }

@@ -6,6 +6,7 @@ import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.entity.GroupEntity;
 import com.be.whereu.model.entity.MemberGroupEntity;
+import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.GroupRepository;
 import com.be.whereu.repository.MemberGroupRepository;
 import com.be.whereu.security.authentication.SecurityContextManager;
@@ -42,6 +43,9 @@ public class GroupServiceImpl implements GroupService {
             // MemberGroupEntity 생성 및 저장
             MemberGroupEntity memberGroupEntity = MemberGroupEntity.ToMemberGroupEntity(savedGroupEntity, memberId);
             memberGroupRepository.save(memberGroupEntity);
+
+
+
             return true;
         } catch (DataAccessException e) {
             // 데이터베이스 관련 예외 처리
@@ -83,9 +87,9 @@ public class GroupServiceImpl implements GroupService {
                     .map(MemberGroupEntity::getMember)
                     .map(MemberDto::toDto)
                     .toList();
-            System.out.println(memberList.getFirst().getBirth());
+           // System.out.println(memberList.getFirst().getBirth());
             groupDto.setMembers(memberList);
-            System.out.println(memberList.getFirst().getNick());
+           // System.out.println(memberList.getFirst().getNick());
             return groupDto;
         } catch (DataAccessException e) {
                 // 데이터베이스 관련 예외 처리
