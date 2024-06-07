@@ -13,7 +13,7 @@
             console.log('Connected: ' + frame);
 
             const chatId = document.getElementById("chatId").value;
-            stompClient.subscribe(`/room/2`, (message) => {
+            stompClient.subscribe(`/room/1`, (message) => {
                 console.log('Received message: ' + message.body);
                 showMessage(JSON.parse(message.body));
 

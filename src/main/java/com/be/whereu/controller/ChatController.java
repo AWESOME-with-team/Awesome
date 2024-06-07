@@ -65,29 +65,24 @@ public class ChatController {
 
 
     @ResponseBody
-    @PostMapping("/create/dm/chat")
-    public ResponseEntity<Void> createDmChat(Long memberId, Authentication authentication){
-        chatService.createDmChat(memberId,authentication);
+    @PostMapping("/chat/dm/create")
+    public ResponseEntity<Void> createDmChat(Long memberId){
+        chatService.createChat(memberId);
         return ResponseEntity.ok().build();
     }
 
-    @ResponseBody
-    @PostMapping("/create/group/chat")
-    public ResponseEntity<Void> createGroupChat(@RequestBody List<Long> memberIds, Authentication authentication){
-        chatService.createGroupChat(memberIds,authentication);
-        return ResponseEntity.ok().build();
-    }
+
 
     //채팅방 초대 한명씩 추가 하는 api필요
     @ResponseBody
-    @PostMapping("/addChatMember")
+    @PostMapping("/chat/member/add")
     public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
         chatService.addMemberChat(memberId,chatId);
         return ResponseEntity.ok().build();
     }
 
     @ResponseBody
-    @DeleteMapping("/exitChat")
+    @DeleteMapping("/chat/exit")
     public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
         boolean isSuccess=chatService.exitChat(memberId,chatId);
         log.info("isSuccess {}",isSuccess);

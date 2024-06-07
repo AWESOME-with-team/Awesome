@@ -1,6 +1,7 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.model.dto.GroupDto;
+import com.be.whereu.service.ChatService;
 import com.be.whereu.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/group")
 public class GroupController {
     private final GroupService groupService;
+    private final ChatService chatService;
 
     /**
      *
@@ -24,7 +26,7 @@ public class GroupController {
      */
     @PostMapping("/create")
     public ResponseEntity<Boolean> createGroup(@RequestBody GroupDto dto) {
-        boolean isSuccess=groupService.createGroup(dto);
+        boolean isSuccess=groupService.createGroup(dto) && chatService.createChat(null);
         if(isSuccess) {
             return ResponseEntity.ok(true);
         }

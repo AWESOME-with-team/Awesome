@@ -9,4 +9,5 @@ public interface GroupService {
     public boolean createGroup(GroupDto groupDto);
     public List<GroupDto> getGroupList();
     public GroupDto groupDetails(Long groupId);
+
 }
