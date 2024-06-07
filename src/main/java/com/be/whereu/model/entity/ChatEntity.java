@@ -23,4 +23,5 @@ public class ChatEntity {
     private Rtype rtype;
     @OneToMany(mappedBy = "chat")
     private List<MessageEntity> message;
+
 }

@@ -26,7 +26,7 @@ public class GroupController {
      */
     @PostMapping("/create")
     public ResponseEntity<Boolean> createGroup(@RequestBody GroupDto dto) {
-        boolean isSuccess=groupService.createGroup(dto) && chatService.createChat(null);
+        boolean isSuccess=groupService.createGroup(dto) ;
         if(isSuccess) {
             return ResponseEntity.ok(true);
         }

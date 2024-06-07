@@ -1,13 +1,12 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.model.ChatMessage;
-import com.be.whereu.model.entity.ChatMemberEntity;
 import com.be.whereu.model.entity.MessageEntity;
 import com.be.whereu.repository.ChatMemberRepository;
 import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
-import com.be.whereu.service.ChatServiceImpl;
+import com.be.whereu.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +16,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Controller
+
 public class ChatController {
 
     private static final Logger log = LoggerFactory.getLogger(ChatController.class);
@@ -33,7 +28,7 @@ public class ChatController {
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
-    private final ChatServiceImpl chatService;
+    private final ChatService chatService;
 
 
     /*
@@ -65,9 +60,9 @@ public class ChatController {
 
 
     @ResponseBody
-    @PostMapping("/chat/dm/create")
-    public ResponseEntity<Void> createDmChat(Long memberId){
-        chatService.createChat(memberId);
+    @PostMapping("/api/chat/create")
+    public ResponseEntity<Void> createWithGroup(Long groupId){
+        chatService.createChatWithGroup(groupId);
         return ResponseEntity.ok().build();
     }
 
@@ -75,20 +70,27 @@ public class ChatController {
 
     //채팅방 초대 한명씩 추가 하는 api필요
     @ResponseBody
-    @PostMapping("/chat/member/add")
+    @PostMapping("/api/chat/member")
     public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
         chatService.addMemberChat(memberId,chatId);
         return ResponseEntity.ok().build();
     }
 
     @ResponseBody
-    @DeleteMapping("/chat/exit")
+    @DeleteMapping("/api/chat/member")
     public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
         boolean isSuccess=chatService.exitChat(memberId,chatId);
         log.info("isSuccess {}",isSuccess);
         return ResponseEntity.ok().build();
     }
 
+//    //본인 memberId가 속한 채팅방 List 가져오기
+//    @ResponseBody
+//    @GetMapping("/list")
+//    public ResponseEntity<List<ChatDto>> listChat(){
+//        List<ChatDto> chatList= chatService.getChatRooms();
+//        return ResponseEntity.ok(chatList);
+//    }
 
 
 
