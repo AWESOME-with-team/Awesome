@@ -7,6 +7,7 @@ import com.be.whereu.repository.ChatMemberRepository;
 import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
+import com.be.whereu.service.ChatService;
 import com.be.whereu.service.ChatServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class ChatController {
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
-    private final ChatServiceImpl chatService;
+    private final ChatService chatService;
 
 
     /*
@@ -65,8 +66,8 @@ public class ChatController {
 
 
     @ResponseBody
-    @PostMapping("/chat/dm/create")
-    public ResponseEntity<Void> createDmChat(Long memberId){
+    @PostMapping("/chat/create")
+    public ResponseEntity<Void> creatChat(Long memberId){
         chatService.createChat(memberId);
         return ResponseEntity.ok().build();
     }
@@ -75,14 +76,14 @@ public class ChatController {
 
     //채팅방 초대 한명씩 추가 하는 api필요
     @ResponseBody
-    @PostMapping("/chat/member/add")
+    @PostMapping("/chat/member")
     public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
         chatService.addMemberChat(memberId,chatId);
         return ResponseEntity.ok().build();
     }
 
     @ResponseBody
-    @DeleteMapping("/chat/exit")
+    @DeleteMapping("/chat/member")
     public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
         boolean isSuccess=chatService.exitChat(memberId,chatId);
         log.info("isSuccess {}",isSuccess);

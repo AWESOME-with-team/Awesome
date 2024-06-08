@@ -37,29 +37,28 @@ public class ChatServiceImpl implements ChatService {
     public boolean createChat(Long receiverId){
         try {
             Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
-            MemberEntity member = memberRepository.findById(memberId).orElseThrow();
+            //MemberEntity member = memberRepository.findById(memberId).orElseThrow();
 
             // 채팅방 생성
             ChatEntity chat = new ChatEntity();
-            chat.setRtype(Rtype.dm);
+            chat.setRtype(Rtype.group);
             chatRepository.save(chat);
 
-            // member1 추가
-            ChatMemberEntity chatMember = new ChatMemberEntity();
-            chatMember.setMember(member);
-            chatMember.setChat(chat);
-            chatMemberRepository.save(chatMember);
+//            // member1 추가
+//            ChatMemberEntity chatMember = new ChatMemberEntity();
+//            chatMember.setMember(member);
+//            chatMember.setChat(chat);
+//            chatMemberRepository.save(chatMember);
 
-            //DM chatting방 일시
-            if(receiverId !=null) {
-                MemberEntity member2 = memberRepository.findById(receiverId).orElseThrow();
+           // MemberEntity member2 = memberRepository.findById(receiverId).orElseThrow();
+            MemberEntity member2 = new MemberEntity();
+            member2.setId(memberId);
+            // member2 추가
+            ChatMemberEntity chatMember2 = new ChatMemberEntity();
+            chatMember2.setMember(member2);
+            chatMember2.setChat(chat);
+            chatMemberRepository.save(chatMember2);
 
-                // member2 추가
-                ChatMemberEntity chatMember2 = new ChatMemberEntity();
-                chatMember2.setMember(member2);
-                chatMember2.setChat(chat);
-                chatMemberRepository.save(chatMember2);
-            }
             return true;
         }catch (DataAccessException e) {
             // 데이터베이스 관련 예외 처리
@@ -72,6 +71,7 @@ public class ChatServiceImpl implements ChatService {
 
 
     }
+
 
     /**
      * 기존 채팅방 인원 초대

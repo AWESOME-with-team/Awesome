@@ -14,7 +14,6 @@ spring:
       - cors
       - univcert
       - frontend
-      - univcert
 
 springdoc:
   swagger-ui:
