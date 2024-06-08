@@ -6,13 +6,12 @@ import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.entity.GroupEntity;
 import com.be.whereu.model.entity.MemberGroupEntity;
-import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.GroupRepository;
 import com.be.whereu.repository.MemberGroupRepository;
 import com.be.whereu.security.authentication.SecurityContextManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,10 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
     private final MemberGroupRepository memberGroupRepository;
+    private final ChatService chatService;
     private final SecurityContextManager securityContextManager;
 
+    @Transactional
     public boolean createGroup(GroupDto groupDto) {
         try {
             log.info("groupDto :{}", groupDto.toString());
@@ -43,6 +44,9 @@ public class GroupServiceImpl implements GroupService {
             // MemberGroupEntity 생성 및 저장
             MemberGroupEntity memberGroupEntity = MemberGroupEntity.ToMemberGroupEntity(savedGroupEntity, memberId);
             memberGroupRepository.save(memberGroupEntity);
+
+            // group 생성시 채팅방도 개설
+            chatService.createChatWithGroup(savedGroupEntity.getId());
 
 
 
