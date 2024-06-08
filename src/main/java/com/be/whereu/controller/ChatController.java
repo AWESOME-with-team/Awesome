@@ -1,11 +1,13 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.model.ChatMessage;
+import com.be.whereu.model.dto.ChatDto;
 import com.be.whereu.model.entity.MessageEntity;
 import com.be.whereu.repository.ChatMemberRepository;
 import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
+import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Controller
 
@@ -29,6 +33,7 @@ public class ChatController {
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
     private final ChatService chatService;
+    private final SecurityContextManager securityContextManager;
 
 
     /*
@@ -39,7 +44,7 @@ public class ChatController {
     @SendTo("/room/{chatId}")                                   //memberId도 받아서 중간엔티티조횔
     public ChatMessage sendMessage( @DestinationVariable("chatId") Long chatId,  ChatMessage chatMessage, Authentication authentication) {
 
-
+        System.out.println("아이디: "+authentication.getName());
         Long memberId = Long.parseLong(authentication.getName());
         var chat = chatRepository.findById(Long.parseLong(chatMessage.getChatId()))
                 .orElseThrow();
@@ -62,8 +67,14 @@ public class ChatController {
     @ResponseBody
     @PostMapping("/api/chat/create")
     public ResponseEntity<Void> createWithGroup(Long groupId){
-        chatService.createChatWithGroup(groupId);
-        return ResponseEntity.ok().build();
+        try {
+            chatService.createChatWithGroup(groupId);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
 
@@ -84,13 +95,13 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-//    //본인 memberId가 속한 채팅방 List 가져오기
-//    @ResponseBody
-//    @GetMapping("/list")
-//    public ResponseEntity<List<ChatDto>> listChat(){
-//        List<ChatDto> chatList= chatService.getChatRooms();
-//        return ResponseEntity.ok(chatList);
-//    }
+    //본인 memberId가 속한 채팅방 List 가져오기
+    @ResponseBody
+    @GetMapping("/api/chat/list")
+    public ResponseEntity<List<ChatListDto>> listChat(){
+        List<ChatListDto> chatList= chatService.getChatRooms();
+        return ResponseEntity.ok(chatList);
+    }
 
 
 
