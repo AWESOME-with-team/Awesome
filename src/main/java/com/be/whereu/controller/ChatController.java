@@ -42,9 +42,9 @@ public class ChatController {
     */
     @MessageMapping("/{chatId}")
     @SendTo("/room/{chatId}")                                   //memberId도 받아서 중간엔티티조횔
-    public ChatMessage sendMessage( @DestinationVariable("chatId") Long chatId,  ChatMessage chatMessage, Authentication authentication) {
+    public ChatMessage sendMessage(@DestinationVariable("chatId") Long chatId, ChatMessage chatMessage, Authentication authentication) {
 
-        System.out.println("아이디: "+authentication.getName());
+        System.out.println("아이디: " + authentication.getName());
         Long memberId = Long.parseLong(authentication.getName());
         var chat = chatRepository.findById(Long.parseLong(chatMessage.getChatId()))
                 .orElseThrow();
@@ -66,11 +66,11 @@ public class ChatController {
 
     @ResponseBody
     @PostMapping("/api/chat/create")
-    public ResponseEntity<Void> createWithGroup(Long groupId){
+    public ResponseEntity<Void> createWithGroup(Long groupId) {
         try {
             chatService.createChatWithGroup(groupId);
             return ResponseEntity.ok().build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -78,31 +78,21 @@ public class ChatController {
     }
 
 
-
     //채팅방 초대 한명씩 추가 하는 api필요
     @ResponseBody
     @PostMapping("/api/chat/member")
-    public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
-        chatService.addMemberChat(memberId,chatId);
+    public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId) {
+        chatService.addMemberChat(memberId, chatId);
         return ResponseEntity.ok().build();
     }
 
     @ResponseBody
     @DeleteMapping("/api/chat/member")
-    public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
-        boolean isSuccess=chatService.exitChat(memberId,chatId);
-        log.info("isSuccess {}",isSuccess);
+    public ResponseEntity<Void> exitChat(Long memberId, Long chatId) {
+        boolean isSuccess = chatService.exitChat(memberId, chatId);
+        log.info("isSuccess {}", isSuccess);
         return ResponseEntity.ok().build();
     }
-
-    //본인 memberId가 속한 채팅방 List 가져오기
-    @ResponseBody
-    @GetMapping("/api/chat/list")
-    public ResponseEntity<List<ChatListDto>> listChat(){
-        List<ChatListDto> chatList= chatService.getChatRooms();
-        return ResponseEntity.ok(chatList);
-    }
-
 
 
 

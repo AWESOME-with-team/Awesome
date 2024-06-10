@@ -26,17 +26,5 @@ public class ChatEntity {
     @OneToMany(mappedBy = "chat")
     private List<MessageEntity> message;
 
-    public String getLastMessage() {
-        Optional<String> lastMessage = message.stream()
-                .map(MessageEntity::getContent)
-                .reduce((first, second) -> second); // 마지막 요소만 남기기 위해 reduce 사용
-        return lastMessage.orElse(null); // 값이 없으면 null 반환
-    }
-    public String getLastMessageTime() {
-        Optional<LocalDateTime> lastMessageTime = message.stream()
-                .map(MessageEntity::getCreateAt)
-                .max(LocalDateTime::compareTo);
-        return lastMessageTime.map(LocalDateTime::toString).orElse(null); // 값이 없으면 null 반환
-    }
 
 }
