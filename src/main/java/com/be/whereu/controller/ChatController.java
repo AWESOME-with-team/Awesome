@@ -35,15 +35,15 @@ public class ChatController {
      */
     @GetMapping("list")
     public ResponseEntity<List<ChatListDto>> getChatList(){
-       List<ChatListDto> chatListDtos= chatService.getChatList();
-       for(ChatListDto chatListDto:chatListDtos){
-           System.out.println(chatListDto.getChatId());
-           System.out.println(chatListDto.getChatName());
-           System.out.println(chatListDto.getChatType());
-           System.out.println(chatListDto.getLastChatAt());
-           System.out.println(chatListDto.getContent());
-       }
-       return ResponseEntity.ok().body(chatListDtos);
+        List<ChatListDto> chatListDtos= chatService.getChatList();
+        for(ChatListDto chatListDto:chatListDtos){
+            System.out.println(chatListDto.getChatId());
+            System.out.println(chatListDto.getChatName());
+            System.out.println(chatListDto.getChatType());
+            System.out.println(chatListDto.getLastChatAt());
+            System.out.println(chatListDto.getContent());
+        }
+        return ResponseEntity.ok().body(chatListDtos);
     }
 
 

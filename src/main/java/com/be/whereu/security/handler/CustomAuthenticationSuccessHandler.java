@@ -37,9 +37,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 //        response.sendRedirect("http://192.168.0.19:9000/api/login/success");
 
         userService.checkAndJoinUser(email, response);
+
         response.sendRedirect("http://172.30.1.9:9000/api/login/success");
+
         //response.sendRedirect("http://localhost:9000/index2.html");
         //response.sendRedirect("http://localhost:9000/api/login/success");
+
     }
 }
 
