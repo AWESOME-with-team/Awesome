@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface MemberGroupRepository extends JpaRepository<MemberGroupEntity,Long> {
     @Query("SELECT mg FROM MemberGroupEntity mg JOIN FETCH mg.group WHERE mg.member.id = :memberId")
     Optional<List<MemberGroupEntity>> findListWithGroupByMemberId(@Param("memberId") Long memberId);
+
+    void deleteByMemberIdAndGroupId(Long memberId, Long groupId);
 }
