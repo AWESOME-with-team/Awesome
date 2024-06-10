@@ -61,7 +61,7 @@ public class ChatServiceImpl implements ChatService {
             // 데이터베이스 관련 예외 처리
             log.error("Database error creating chat: {} ", e.getMessage());
         }catch (NumberFormatException e) {
-        log.error("Invalid member ID format: {}", e.getMessage());
+            log.error("Invalid member ID format: {}", e.getMessage());
         }catch (IllegalArgumentException e) {
             log.error("Entity not found: {}", e.getMessage());
         }catch (Exception e) {
@@ -113,8 +113,3 @@ public class ChatServiceImpl implements ChatService {
     }
 
 }
-
-
-
-
-

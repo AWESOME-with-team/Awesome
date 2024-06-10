@@ -5,7 +5,9 @@ import com.be.whereu.model.Rtype;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -25,5 +27,6 @@ public class ChatEntity {
     private List<ChatMemberEntity> chatMembers;
     @OneToMany(mappedBy = "chat")
     private List<MessageEntity> message;
+
 
 }
