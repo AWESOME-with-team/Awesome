@@ -1,17 +1,13 @@
 package com.be.whereu.controller;
-
 import com.be.whereu.model.ChatMessage;
-import com.be.whereu.model.dto.ChatDto;
+import com.be.whereu.model.dto.ChatListDto;
 import com.be.whereu.model.entity.MessageEntity;
-import com.be.whereu.repository.ChatMemberRepository;
 import com.be.whereu.repository.ChatRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.MessageRepository;
-import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,16 +20,32 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-
+@RequestMapping("/api/chat")
+@Slf4j
 public class ChatController {
 
-    private static final Logger log = LoggerFactory.getLogger(ChatController.class);
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
-    private final ChatMemberRepository chatMemberRepository;
     private final ChatService chatService;
-    private final SecurityContextManager securityContextManager;
+
+    /**
+     *
+     * @return chat의 목록이 나옵니다
+     */
+    @GetMapping("list")
+    public ResponseEntity<List<ChatListDto>> getChatList(){
+        List<ChatListDto> chatListDtos= chatService.getChatList();
+        for(ChatListDto chatListDto:chatListDtos){
+            System.out.println(chatListDto.getChatId());
+            System.out.println(chatListDto.getChatName());
+            System.out.println(chatListDto.getChatType());
+            System.out.println(chatListDto.getLastChatAt());
+            System.out.println(chatListDto.getContent());
+        }
+        return ResponseEntity.ok().body(chatListDtos);
+    }
+
 
 
     /*
@@ -42,17 +54,14 @@ public class ChatController {
     */
     @MessageMapping("/{chatId}")
     @SendTo("/room/{chatId}")                                   //memberId도 받아서 중간엔티티조횔
-    public ChatMessage sendMessage(@DestinationVariable("chatId") Long chatId, ChatMessage chatMessage, Authentication authentication) {
+    public ChatMessage sendMessage( @DestinationVariable("chatId") Long chatId,  ChatMessage chatMessage, Authentication authentication) {
 
-        System.out.println("아이디: " + authentication.getName());
+
         Long memberId = Long.parseLong(authentication.getName());
         var chat = chatRepository.findById(Long.parseLong(chatMessage.getChatId()))
                 .orElseThrow();
-
         // 누가보냈는지 식별하기
         var sender = memberRepository.findById(memberId).orElseThrow();
-
-
         // sender가 chat 에 해당되는지 검증
         var message = MessageEntity.builder()
                 .member(sender)
@@ -65,34 +74,38 @@ public class ChatController {
 
 
     @ResponseBody
-    @PostMapping("/api/chat/create")
-    public ResponseEntity<Void> createWithGroup(Long groupId) {
-        try {
-            chatService.createChatWithGroup(groupId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-
-
+    @PostMapping("/create")
+    public ResponseEntity<Void> createWithGroup(Long groupId){
+        chatService.createChatByGroup(groupId);
+        return ResponseEntity.ok().build();
     }
+
 
 
     //채팅방 초대 한명씩 추가 하는 api필요
     @ResponseBody
-    @PostMapping("/api/chat/member")
-    public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId) {
-        chatService.addMemberChat(memberId, chatId);
+    @PostMapping("/member")
+    public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
+        chatService.addMemberChat(memberId,chatId);
         return ResponseEntity.ok().build();
     }
 
     @ResponseBody
-    @DeleteMapping("/api/chat/member")
-    public ResponseEntity<Void> exitChat(Long memberId, Long chatId) {
-        boolean isSuccess = chatService.exitChat(memberId, chatId);
-        log.info("isSuccess {}", isSuccess);
+    @DeleteMapping("/member")
+    public ResponseEntity<Void> exitChat(Long memberId, Long chatId){
+        boolean isSuccess=chatService.exitChat(memberId,chatId);
+        log.info("isSuccess {}",isSuccess);
         return ResponseEntity.ok().build();
     }
+
+//    //본인 memberId가 속한 채팅방 List 가져오기
+//    @ResponseBody
+//    @GetMapping("/list")
+//    public ResponseEntity<List<ChatDto>> listChat(){
+//        List<ChatDto> chatList= chatService.getChatRooms();
+//        return ResponseEntity.ok(chatList);
+//    }
+
 
 
 

@@ -46,7 +46,7 @@ public class GroupServiceImpl implements GroupService {
             memberGroupRepository.save(memberGroupEntity);
 
             // group 생성시 채팅방도 개설
-            chatService.createChatWithGroup(savedGroupEntity.getId());
+            chatService.createChatByGroup(savedGroupEntity.getId());
 
 
 

@@ -18,12 +18,11 @@ public class ChatMemberEntity extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id",foreignKey = @ForeignKey(name="member_chat_fk"))
+    @JoinColumn(name="member_id",foreignKey = @ForeignKey(name="chatmg_member_fk"))
     private MemberEntity member;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="chat_id",foreignKey = @ForeignKey(name="chat_member_fk"))
+    @JoinColumn(name="chat_id",foreignKey = @ForeignKey(name="chatmg_chat_fk"))
     private ChatEntity chat;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="group_id",foreignKey = @ForeignKey(name="chat_group_fk"))
     private GroupEntity group;
