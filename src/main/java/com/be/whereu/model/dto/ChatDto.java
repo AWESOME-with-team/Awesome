@@ -16,7 +16,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Data
 public class ChatDto {
     private Long id;
