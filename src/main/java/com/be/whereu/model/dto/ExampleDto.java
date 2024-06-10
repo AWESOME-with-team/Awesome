@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class ExampleDto {
     private Long id;
     private String name;
+
+
 }

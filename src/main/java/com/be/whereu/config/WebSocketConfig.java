@@ -12,9 +12,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app")
+
+        registry.setApplicationDestinationPrefixes("/send")
                 //큐는 1대1 토픽은 1대다 메시징
-                .enableSimpleBroker("/topic");
+                .enableSimpleBroker("/room");
+
     }
 
     @Override

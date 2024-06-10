@@ -22,5 +22,8 @@ public class ChatEntity {
     @Enumerated(EnumType.STRING)
     private Rtype rtype;
     @OneToMany(mappedBy = "chat")
+    private List<ChatMemberEntity> chatMembers;
+    @OneToMany(mappedBy = "chat")
     private List<MessageEntity> message;
+
 }

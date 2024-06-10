@@ -14,12 +14,11 @@ import com.be.whereu.repository.GroupRequestRepository;
 import com.be.whereu.repository.MemberGroupRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.security.authentication.SecurityContextManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +29,12 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
     private final MemberGroupRepository memberGroupRepository;
+    private final ChatService chatService;
     private final SecurityContextManager securityContextManager;
     private final MemberRepository memberRepository;
     private final GroupRequestRepository groupRequestRepository;
 
+    @Transactional
     public boolean createGroup(GroupDto groupDto) {
         try {
             log.info("groupDto :{}", groupDto.toString());
@@ -49,6 +50,12 @@ public class GroupServiceImpl implements GroupService {
             // MemberGroupEntity 생성 및 저장
             MemberGroupEntity memberGroupEntity = MemberGroupEntity.ToMemberGroupEntity(savedGroupEntity, memberId);
             memberGroupRepository.save(memberGroupEntity);
+
+            // group 생성시 채팅방도 개설
+            chatService.createChatByGroup(savedGroupEntity.getId());
+
+
+
             return true;
         } catch (DataAccessException e) {
             // 데이터베이스 관련 예외 처리
@@ -89,9 +96,9 @@ public class GroupServiceImpl implements GroupService {
                     .map(MemberGroupEntity::getMember)
                     .map(MemberDto::toDto)
                     .toList();
-            System.out.println(memberList.getFirst().getBirth());
+           // System.out.println(memberList.getFirst().getBirth());
             groupDto.setMembers(memberList);
-            System.out.println(memberList.getFirst().getNick());
+           // System.out.println(memberList.getFirst().getNick());
             return groupDto;
         } catch (DataAccessException e) {
             // 데이터베이스 관련 예외 처리

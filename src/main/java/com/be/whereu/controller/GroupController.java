@@ -4,6 +4,7 @@ import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.dto.GroupRequestDto;
 import com.be.whereu.model.entity.GroupRequestEntity;
 import com.be.whereu.model.entity.MemberEntity;
+import com.be.whereu.service.ChatService;
 import com.be.whereu.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

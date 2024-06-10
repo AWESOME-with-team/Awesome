@@ -109,7 +109,7 @@ public class JwtService { //jwt를 사용해서 jwt 생성하고 유효한 토�
             return null;
         }
         boolean isEmailExist = refreshTokenEntity.getMember().getUniversityEmail() != null;
-        return createAccessTokenFromMemberId(refreshTokenEntity.getId(),isEmailExist);
+        return createAccessTokenFromMemberId(refreshTokenEntity.getMemberId(),isEmailExist);
     }
 
     /**

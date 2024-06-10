@@ -2,16 +2,19 @@ package com.be.whereu.controller;
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.dto.TokenRequest;
+
 import com.be.whereu.service.token.JwtService;
 import com.be.whereu.service.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -27,11 +30,13 @@ public class TokenController {
      * 
      * @return access 가 유효검사 필터에서 통과시 200번 응답 대학 email 없을시 201번응답
      */
+
     @GetMapping("/access")
     public ResponseEntity<String> myMember(@RequestHeader("access-token") String accessJws){
         log.info("accessJws: {}", accessJws);
         log.info("access 200 response ");
         return ResponseEntity.status(HttpStatus.OK).body("valid accessToken");
+
     }
 
     /**

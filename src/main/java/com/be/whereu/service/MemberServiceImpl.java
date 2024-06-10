@@ -6,6 +6,7 @@ import com.be.whereu.model.Gender;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.entity.MemberEntity;
+import com.be.whereu.model.entity.SchoolEntity;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.service.token.JwtService;
 import com.be.whereu.service.token.TokenService;
