@@ -19,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -53,7 +55,6 @@ public class GroupServiceImpl implements GroupService {
 
             // group 생성시 채팅방도 개설
             chatService.createChatByGroup(savedGroupEntity.getId());
-
 
 
             return true;
@@ -90,15 +91,15 @@ public class GroupServiceImpl implements GroupService {
     public GroupDto groupDetails(Long groupId) {
         try {
             GroupEntity groupEntity = groupRepository.findGroupWithMembers(groupId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Group Id:"+groupId+ " not found"));
-            GroupDto groupDto=GroupDto.toDto(groupEntity);
-            List<MemberDto> memberList= groupEntity.getMemberGroup().stream()
+                    .orElseThrow(() -> new ResourceNotFoundException("Group Id:" + groupId + " not found"));
+            GroupDto groupDto = GroupDto.toDto(groupEntity);
+            List<MemberDto> memberList = groupEntity.getMemberGroup().stream()
                     .map(MemberGroupEntity::getMember)
                     .map(MemberDto::toDto)
                     .toList();
-           // System.out.println(memberList.getFirst().getBirth());
+            // System.out.println(memberList.getFirst().getBirth());
             groupDto.setMembers(memberList);
-           // System.out.println(memberList.getFirst().getNick());
+            // System.out.println(memberList.getFirst().getNick());
             return groupDto;
         } catch (DataAccessException e) {
             // 데이터베이스 관련 예외 처리
@@ -108,7 +109,6 @@ public class GroupServiceImpl implements GroupService {
             log.error("groupDetails occurred {}", e.getMessage());
             throw new CustomServiceException("Failed to get group Detail", e);
         }
-
     }
 
     @Transactional
@@ -128,10 +128,9 @@ public class GroupServiceImpl implements GroupService {
 
         return groupRequestRepository.saveAll(requests);
     }
-    @Transactional
+
     @Override
     public void acceptGroupRequest(Long requestId) {
-        securityContextManager.getAuthenticatedUserName();
         GroupRequestEntity request = groupRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
 
@@ -167,17 +166,17 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<MemberEntity> searchMembersByNickName(String nick) {
-        return memberRepository.searchByNick(nick).orElseThrow();
+    public Optional<MemberEntity> searchMembersByNickName(String nickName) {
+        return Optional.ofNullable(memberRepository.findByNick(nickName));
     }
 
     //그룹 탈퇴
     @Override
     public void leaveGroup(Long memberId, Long groupId) {
-        if(!memberRepository.existsById(memberId)) {
+        if (!memberRepository.existsById(memberId)) {
             throw new ResourceNotFoundException("Member ID not found");
         }
-        if(!groupRepository.existsById(groupId)) {
+        if (!groupRepository.existsById(groupId)) {
             throw new ResourceNotFoundException("Group ID not found");
         }
         memberGroupRepository.deleteByMemberIdAndGroupId(memberId, groupId);
@@ -190,4 +189,3 @@ public class GroupServiceImpl implements GroupService {
         return GroupRequestDto.toDto(entity);
     }
 }
-

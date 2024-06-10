@@ -1,10 +1,10 @@
 package com.be.whereu.controller;
 
+import com.be.whereu.exception.ResourceNotFoundException;
 import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.dto.GroupRequestDto;
 import com.be.whereu.model.entity.GroupRequestEntity;
 import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.service.ChatService;
 import com.be.whereu.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -57,7 +58,6 @@ public class GroupController {
     @SendTo("/topic/invitation")
     public ResponseEntity<List<GroupRequestEntity>> groupRequest(@RequestBody GroupRequestDto groupRequestDto) {
         List<GroupRequestEntity> requests = groupService.groupRequest(groupRequestDto.getChatId(), groupRequestDto.getNickname());
-
         // 초대 요청에 대한 실시간 알림 전송
         String destination = "/topic/invitation/" + groupRequestDto.getChatId();
         messagingTemplate.convertAndSend(destination, "New invitation request for chatId: " + groupRequestDto.getChatId());
@@ -81,13 +81,17 @@ public class GroupController {
 
     //초대할 멤버 검색
     @GetMapping("/members/search")
-    public ResponseEntity<List<MemberEntity>> searchMembers(@RequestParam String nick) {
+    public ResponseEntity<Optional<MemberEntity>> searchMembers(@RequestParam String nick) {
         if (nick == null || nick.trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new ResourceNotFoundException("Nickname cannot be null or empty.");
         }
 
-        List<MemberEntity> members = groupService.searchMembersByNickName(nick);
-        return new ResponseEntity<>(members, HttpStatus.OK);
+        Optional<MemberEntity> members = groupService.searchMembersByNickName(nick);
+        if (members.isPresent()) {
+            return new ResponseEntity<>(members, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Optional.empty(), HttpStatus.NOT_FOUND);
+        }
     }
 
     //그룹 탈퇴

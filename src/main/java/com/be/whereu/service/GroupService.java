@@ -6,6 +6,7 @@ import com.be.whereu.model.entity.GroupRequestEntity;
 import com.be.whereu.model.entity.MemberEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GroupService {
 
@@ -17,6 +18,6 @@ public interface GroupService {
     void rejectGroupRequest(Long requestId);
     GroupDto getData(long groupId);
     GroupRequestDto getGroupRequestData(Long requestId);
-    List<MemberEntity> searchMembersByNickName(String nick);
+    Optional<MemberEntity> searchMembersByNickName(String nickName);
     void leaveGroup(Long memberId, Long groupId);
 }

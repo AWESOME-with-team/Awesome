@@ -33,5 +33,4 @@ public class SecurityContextManager {
         }
         return null; // 인증된 사용자가 없는 경우
     }
-
 }
