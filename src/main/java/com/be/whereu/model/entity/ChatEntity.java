@@ -22,7 +22,7 @@ public class ChatEntity {
     @Enumerated(EnumType.STRING)
     private Rtype rtype;
     @OneToMany(mappedBy = "chat")
-    private List<ChatMemberEntity> chatMembers;
+    private List<ChatMemberGroupEntity> chatMembers;
     @OneToMany(mappedBy = "chat")
     private List<MessageEntity> message;
 
