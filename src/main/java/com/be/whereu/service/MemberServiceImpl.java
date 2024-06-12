@@ -2,6 +2,7 @@ package com.be.whereu.service;
 
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
+import com.be.whereu.exception.ResourceNotFoundException;
 import com.be.whereu.model.Gender;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -76,6 +78,15 @@ public class MemberServiceImpl implements MemberSerivce{
         }
 
         return isNickExist;
+    }
+
+    @Override
+    public List<String> searchByNick(String nick) {
+        return  memberRepository.findByNickContaining(nick).orElseThrow(()-> new ResourceNotFoundException("no resource about "+nick))
+                .stream()
+                .map(MemberEntity::getNick)
+                .toList();
+
     }
 
 

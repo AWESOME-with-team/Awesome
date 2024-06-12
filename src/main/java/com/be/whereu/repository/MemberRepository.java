@@ -11,9 +11,10 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
 
     @Query("SELECT m FROM MemberEntity m WHERE m.email=:email")
-    public MemberEntity findByEmail(String email);
+    MemberEntity findByEmail(String email);
 
     MemberEntity findByNick(String nick);
 
     Optional<List<MemberEntity>> searchByNick(String nick);
+    Optional<List<MemberEntity>> findByNickContaining(String nick);
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,13 @@ public class MemberController {
         Boolean isNickExist = memberSerivce.findMemberNick(nick);
         log.info("isNickExist: {}", isNickExist);
         return  ResponseEntity.ok().body(isNickExist);
+    }
+
+    @GetMapping("/member/search/{nick}")
+    public  ResponseEntity<List<String>> getNickList(@PathVariable String nick) {
+        System.out.println("nick ="+ nick);
+        List<String> result = memberSerivce.searchByNick(nick);
+        return ResponseEntity.ok(result);
     }
 
 

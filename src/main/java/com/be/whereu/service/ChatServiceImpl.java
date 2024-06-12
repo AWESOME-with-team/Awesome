@@ -4,7 +4,7 @@ import com.be.whereu.exception.ResourceNotFoundException;
 import com.be.whereu.model.Rtype;
 import com.be.whereu.model.dto.ChatListDto;
 import com.be.whereu.model.entity.ChatEntity;
-import com.be.whereu.model.entity.ChatMemberEntity;
+import com.be.whereu.model.entity.ChatMemberGroupEntity;
 import com.be.whereu.model.entity.GroupEntity;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.repository.*;
@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -33,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
      *
      */
     @Transactional
-    @Override  //nick으로 memberId를 조회하기로 바꾸기
+    @Override
     public void createChatByGroup(Long groupId){
         try {
             Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
@@ -49,12 +51,12 @@ public class ChatServiceImpl implements ChatService {
             groupEntity.setId(groupId);
 
 
-            ChatMemberEntity chatMemberEntity=new ChatMemberEntity();
-            chatMemberEntity.setMember(memberEntity);
-            chatMemberEntity.setGroup(groupEntity);
-            chatMemberEntity.setChat(chatEntity);
+            ChatMemberGroupEntity chatMemberGroupEntity =new ChatMemberGroupEntity();
+            chatMemberGroupEntity.setMember(memberEntity);
+            chatMemberGroupEntity.setGroup(groupEntity);
+            chatMemberGroupEntity.setChat(chatEntity);
 
-            chatMemberGroupRepository.save(chatMemberEntity);
+            chatMemberGroupRepository.save(chatMemberGroupEntity);
 
 
         }catch (DataAccessException e) {
@@ -80,7 +82,7 @@ public class ChatServiceImpl implements ChatService {
     public void addMemberChat(Long memberId, Long chatId) {
         MemberEntity member = memberRepository.findById(memberId).orElseThrow();
         ChatEntity chat = chatRepository.findById(chatId).orElseThrow();
-        ChatMemberEntity chatMember = new ChatMemberEntity();
+        ChatMemberGroupEntity chatMember = new ChatMemberGroupEntity();
         chatMember.setMember(member);
         chatMember.setChat(chat);
         chatMemberGroupRepository.save(chatMember);
@@ -92,7 +94,7 @@ public class ChatServiceImpl implements ChatService {
 
         // ChatMemberEntity 찾기
         // Entity 삭제
-        Optional<ChatMemberEntity> chatMemberOptional = chatMemberGroupRepository.findByMemberIdAndChatId(memberId, chatId);
+        Optional<ChatMemberGroupEntity> chatMemberOptional = chatMemberGroupRepository.findByMemberIdAndChatId(memberId, chatId);
 
         if (chatMemberOptional.isPresent()) {
             // Entity 삭제
@@ -107,9 +109,26 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatListDto> getChatList() {
         Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
 
-        return chatMemberGroupRepository.findChatListByMemberId(memberId).orElseThrow(
+
+        List<ChatListDto> result =chatMemberGroupRepository.findChatListByMemberId(memberId).orElseThrow(
                 () -> new ResourceNotFoundException("No chat member found for id " + memberId)
         );
+        for(ChatListDto dto:result){
+            System.out.println(dto.getLastChatAt());
+        };
+        return result.stream()
+                .sorted((chat1, chat2) -> {
+                    if (chat1.getLastChatAt() == null && chat2.getLastChatAt() == null) {
+                        return 0;
+                    } else if (chat1.getLastChatAt() == null) {
+                        return 1; // chat1의 lastChatAt이 null이면 chat1을 chat2보다 뒤로 보낸다
+                    } else if (chat2.getLastChatAt() == null) {
+                        return -1; // chat2의 lastChatAt이 null이면 chat2를 chat1보다 뒤로 보낸다
+                    } else {
+                        return chat2.getLastChatAt().compareTo(chat1.getLastChatAt());
+                    }
+                })
+                .toList();
     }
 
 }

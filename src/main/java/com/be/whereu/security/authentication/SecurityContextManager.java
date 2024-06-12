@@ -13,24 +13,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Slf4j
-@Component
-public class SecurityContextManager {
 
-    public void setUpSecurityContext(WhereUJwt accessToken, HttpServletRequest request) {
-        String memberId = accessToken.getSubject();
-        log.info("memberId:{}", memberId);
-        UserDetails userDetails = new User(memberId, "", List.of());
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
 
-    public String getAuthenticatedUserName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            return ((UserDetails) authentication.getPrincipal()).getUsername();
-        }
-        return null; // 인증된 사용자가 없는 경우
-    }
+public interface SecurityContextManager {
+
+    public void setUpSecurityContext(WhereUJwt accessToken, HttpServletRequest request);
+
+    public String getAuthenticatedUserName();
+
 }
