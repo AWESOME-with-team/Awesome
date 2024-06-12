@@ -33,8 +33,7 @@ public class CommentEntity extends BaseEntity{
     @Column(nullable = false)
     private String content;
 
-
-    @Column(name = "like_count",  nullable = false)
+    @Column(name = "like_count")
     private Integer likeCount;
 
 
@@ -42,9 +41,8 @@ public class CommentEntity extends BaseEntity{
     @JoinColumn (name = "parent_id" ,foreignKey = @ForeignKey(name = "comment_parent_fk"))
     private CommentEntity parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentEntity> children ;
-
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> children;
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
     public Integer getLikeCount(){

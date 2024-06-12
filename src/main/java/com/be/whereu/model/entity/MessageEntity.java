@@ -1,7 +1,10 @@
 package com.be.whereu.model.entity;
 
+import com.be.whereu.model.dto.MessageDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import javax.sound.midi.MetaMessage;
 
 @Getter
 @Setter
@@ -21,4 +24,16 @@ public class MessageEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="chat_id", foreignKey = @ForeignKey(name="message_chat_fk"))
     private ChatEntity chat;
+
+    public static MessageEntity toEntity(MessageDto dto , Long memberId ,Long chatId ) {
+        MemberEntity memberEntity=new MemberEntity();
+        ChatEntity chatEntity= new ChatEntity();
+        memberEntity.setId(memberId);
+        chatEntity.setId(chatId);
+        return  MessageEntity.builder()
+                .chat(chatEntity)
+                .member(memberEntity)
+                .content(dto.getContent())
+                .build();
+    }
 }

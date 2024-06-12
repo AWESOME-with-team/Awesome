@@ -1,7 +1,6 @@
 package com.be.whereu.model.dto;
 
 import com.be.whereu.model.entity.GroupEntity;
-import com.be.whereu.model.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +33,7 @@ public class GroupDto {
                 .isMatch(entity.getIsmatch().name())
                 .build();
     }
+
     @Override
     public String toString() {
         return "GroupDto{" +

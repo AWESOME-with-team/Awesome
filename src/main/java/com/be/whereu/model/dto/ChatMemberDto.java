@@ -1,6 +1,6 @@
 package com.be.whereu.model.dto;
 
-import com.be.whereu.model.entity.ChatMemberEntity;
+import com.be.whereu.model.entity.ChatMemberGroupEntity;
 import lombok.*;
 
 
@@ -15,7 +15,7 @@ public class ChatMemberDto {
 
 
 
-    public static ChatMemberDto toDto(ChatMemberEntity entity) {
+    public static ChatMemberDto toDto(ChatMemberGroupEntity entity) {
         if (entity == null) {
             return null;
         }

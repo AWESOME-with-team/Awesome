@@ -4,8 +4,6 @@ import com.be.whereu.model.dto.ChatMemberDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
@@ -13,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "chat_mg_tbl")
-public class ChatMemberEntity extends BaseEntity{
+public class ChatMemberGroupEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,11 +26,11 @@ public class ChatMemberEntity extends BaseEntity{
     private GroupEntity group;
 
 
-    public static ChatMemberEntity toEntity(ChatMemberDto dto, MemberEntity member, ChatEntity chat) {
+    public static ChatMemberGroupEntity toEntity(ChatMemberDto dto, MemberEntity member, ChatEntity chat) {
         if (dto == null) {
             return null;
         }
-        return ChatMemberEntity.builder()
+        return ChatMemberGroupEntity.builder()
                 .id(dto.getId())
                 .member(member)
                 .chat(chat)

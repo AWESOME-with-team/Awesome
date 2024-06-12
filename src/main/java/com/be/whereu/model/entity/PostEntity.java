@@ -51,6 +51,7 @@ public class PostEntity extends BaseEntity {
 
 
     public static PostEntity toPostEntity(PostDto dto){
+
        MemberEntity member=new MemberEntity();
        CommonEntity common=new CommonEntity();
        member.setNick(dto.getNick());
@@ -67,6 +68,7 @@ public class PostEntity extends BaseEntity {
                 .title(dto.getTitle())
                 .content(dto.getContent())
                .build();
+
     }
 
 
