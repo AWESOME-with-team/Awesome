@@ -13,6 +13,6 @@ import java.io.IOException;
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.sendRedirect("http://172.18.32.234:9000/login/fail");
+        response.sendRedirect("http://172.30.1.56:9000/login/fail");
     }
 }
