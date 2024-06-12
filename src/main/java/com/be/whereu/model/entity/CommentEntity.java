@@ -1,11 +1,12 @@
 package com.be.whereu.model.entity;
 
+import com.be.whereu.model.dto.board.CommentRequestDto;
+import com.be.whereu.model.dto.board.CommentResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @NoArgsConstructor
@@ -49,4 +50,28 @@ public class CommentEntity extends BaseEntity{
         return likeCount !=null ? likeCount : 0;
     }
 
+    public static CommentEntity toEntity(CommentRequestDto CommentRequestDto) {
+        if (CommentRequestDto == null) {
+            return null;
+        }
+
+        CommentEntity commentEntity = CommentEntity.builder()
+                .id(CommentRequestDto.getId())
+                .content(CommentRequestDto.getContent())
+                .build();
+
+
+        // ParentId => ParentEntity에 담아서 저장
+        if (CommentRequestDto.getParentId() != null) {
+            commentEntity.setParent(CommentEntity.builder().id(CommentRequestDto.getParentId()).build());
+        }
+
+        // PostId => PostEntity에 담아서 저장
+        if (CommentRequestDto.getPostId() != null) {
+            commentEntity.setPost(PostEntity.builder().id(CommentRequestDto.getPostId()).build());
+        }
+
+
+        return commentEntity;
+    }
 }

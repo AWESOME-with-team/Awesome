@@ -5,18 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PostDto {
+public class PostResponseDto {
     private Long id;
     private Long commonId;  //게시판 번호
     private String title;
@@ -27,7 +25,7 @@ public class PostDto {
     private String createDate;
     private String modifyDate;
     private String School;
-    List<CommentDto> commentList;
+
 
 
 
@@ -54,14 +52,21 @@ public class PostDto {
     }
 
 
-    public static PostDto toDto(PostEntity entity) {
-        return PostDto.builder()
+    public static PostResponseDto toDto(PostEntity entity) {
+        // LocalDate to String
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return PostResponseDto.builder()
                 .id(entity.getId())
+                .commonId(entity.getCommon().getCodeId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .likeCount(entity.getLikeCount())
                 .viewCount(entity.getViewCount())
                 .nick(entity.getMember().getNick())
+                .createDate(entity.getCreateAt().format(formatter))
+                .modifyDate(entity.getModifiedAt().format(formatter))
+                .School(entity.getMember().getUniversityName())
                 .build();
     }
 

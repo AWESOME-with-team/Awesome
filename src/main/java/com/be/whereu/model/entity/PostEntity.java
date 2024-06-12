@@ -1,9 +1,12 @@
 package com.be.whereu.model.entity;
 
 
-import com.be.whereu.model.dto.board.PostDto;
+import com.be.whereu.model.dto.board.PostRequestDto;
+import com.be.whereu.model.dto.board.PostResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,6 +42,11 @@ public class PostEntity extends BaseEntity {
     @Column(name = "like_count")
     private Integer likeCount;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments;
+
+
+
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
     public Integer getViewCount(){
         return viewCount !=null ? viewCount : 0;
@@ -50,26 +58,26 @@ public class PostEntity extends BaseEntity {
 
 
 
-    public static PostEntity toPostEntity(PostDto dto){
 
-       MemberEntity member=new MemberEntity();
-       CommonEntity common=new CommonEntity();
-       member.setNick(dto.getNick());
-       common.setCodeId(dto.getCommonId());
+
+
+    public static PostEntity ToPostEntity(PostRequestDto dto){
+
+        CommonEntity common=new CommonEntity();
+
+        common.setCodeId(dto.getCommonId());
 
         return  PostEntity.builder()
-               .id(dto.getId())
+                .id(dto.getId())
                 .common(common)
-               .title(dto.getTitle())
-               .content(dto.getContent())
-               .member(member)
-                .viewCount(dto.getViewCount())
-                .likeCount(dto.getLikeCount())
                 .title(dto.getTitle())
                 .content(dto.getContent())
-               .build();
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .build();
 
     }
+
 
 
 }

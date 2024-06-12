@@ -14,7 +14,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        response.sendRedirect("http://172.30.1.78:9000/login/fail");
+        response.sendRedirect("http://localhost:9000/login/fail");
 
     }
 }
