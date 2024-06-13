@@ -21,9 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,22 +55,40 @@ public class CommentServiceImpl implements CommentService {
         return commentResponseDto;
     }
 
-    //댓글 리스트 불러오기
     @Transactional
     @Override
-    public List<CommentResponseDto> getCommentList(Long postId,int pageNumber) {
-
+    public List<CommentResponseDto> getCommentList(Long postId, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, COMMENT_PAGE_SIZE, Sort.by("id").descending());
-        try{
-            List<CommentEntity> commentList = commentRepository.findByPostId(postId,pageable);
-            log.info("commentList: {}", commentList);
+        try {
+            List<CommentEntity> commentEntities = commentRepository.findByPostId(postId, pageable);
 
-            return commentList.stream().map(CommentResponseDto::toDto).collect(Collectors.toList());
-        }catch (DataAccessException e){
-            log.error("DataBase access error",e);
-            return Collections.emptyList();  //빈리스트 반환
-        }catch (Exception e){
-            log.error("An unexpected error",e);
+            Map<Long, CommentResponseDto> commentMap = new HashMap<>();
+            List<CommentResponseDto> topLevelComments = new ArrayList<>();
+
+            // 모든 댓글을 DTO로 변환하면서 부모-자식 관계 설정
+            for (CommentEntity comment : commentEntities) {
+                CommentResponseDto dto = CommentResponseDto.toDto(comment);
+                commentMap.put(dto.getId(), dto);
+
+                if (dto.getParentId() == null) {
+                    topLevelComments.add(dto);
+                } else {
+                    CommentResponseDto parentDto = commentMap.get(dto.getParentId());
+                    if (parentDto != null) {
+                        if (parentDto.getChildren() == null) {
+                            parentDto.setChildren(new ArrayList<>());
+                        }
+                        parentDto.getChildren().add(dto);
+                    }
+                }
+            }
+
+            return topLevelComments;
+        } catch (DataAccessException e) {
+            log.error("DataBase access error", e);
+            return Collections.emptyList();  // 빈 리스트 반환
+        } catch (Exception e) {
+            log.error("An unexpected error", e);
             return Collections.emptyList();
         }
     }
