@@ -9,5 +9,5 @@ public interface MemberSerivce {
     public String updateAndGiveNewAccessToken(MemberDto dto, String access_token);
     public MemberDto getData(long memberId);
     public Boolean findMemberNick(String nick);
-    public List<String> searchByNick(String nick);
+    public List<String> searchNickListByGroupId(String nick , Long groupId);
 }

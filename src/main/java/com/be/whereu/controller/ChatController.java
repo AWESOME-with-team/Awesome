@@ -1,12 +1,6 @@
 package com.be.whereu.controller;
-import com.be.whereu.model.ChatMessage;
 import com.be.whereu.model.dto.ChatListDto;
 import com.be.whereu.model.dto.MessageDto;
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.MessageEntity;
-import com.be.whereu.repository.ChatRepository;
-import com.be.whereu.repository.MemberRepository;
-import com.be.whereu.repository.MessageRepository;
 import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.ChatService;
 import com.be.whereu.service.MessageService;
@@ -21,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -64,9 +57,12 @@ public class ChatController {
     @MessageMapping("/{chatId}")
     @SendTo("/room/{chatId}")
     public MessageDto sendMessage(@DestinationVariable("chatId") Long chatId, MessageDto dto, Authentication authentication) {
-        Long memberId = Long.parseLong(authentication.getName());
 
-        return messageService.messageSave(dto,memberId,chatId);
+        Long memberId = Long.parseLong(authentication.getName());
+        var result = messageService.messageSave(dto,memberId,chatId);
+        result.setNick(dto.getNick());
+
+        return result;
     }
 
 
@@ -75,7 +71,7 @@ public class ChatController {
     @ResponseBody
     @PostMapping("/member")
     public ResponseEntity<Void> addMemberChat(Long memberId, Long chatId){
-        chatService.addMemberChat(memberId,chatId);
+        chatService.addMemberGroupChat(memberId,chatId);
         return ResponseEntity.ok().build();
     }
 

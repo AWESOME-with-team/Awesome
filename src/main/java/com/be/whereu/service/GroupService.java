@@ -9,5 +9,8 @@ public interface GroupService {
     public boolean createGroup(GroupDto groupDto);
     public List<GroupDto> getGroupList();
     public GroupDto groupDetails(Long groupId);
+    public boolean addMemberInRequestGroup(Long groupId, String Nick);
+    public List<GroupDto> getRequestGroupListToMe();
+    public boolean deleteRequestAndJoinGroup(Long groupId);
 
 }
