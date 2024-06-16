@@ -1,6 +1,5 @@
 package com.be.whereu.model.entity;
 
-
 import com.be.whereu.model.Gender;
 import com.be.whereu.model.dto.GroupDto;
 import com.be.whereu.model.isMatch;

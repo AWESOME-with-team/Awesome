@@ -1,10 +1,12 @@
 package com.be.whereu.model.entity;
 
 
+import com.be.whereu.model.dto.board.PostRequestDto;
+import com.be.whereu.model.dto.board.PostResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +33,7 @@ public class PostEntity extends BaseEntity {
     private String content;
 
     @ManyToOne
-    @JoinColumn (name = "member_id", foreignKey = @ForeignKey(name = "post_member_fk"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "post_member_fk"))
     private MemberEntity member;
 
     @Column(name = "view_count")
@@ -39,6 +41,43 @@ public class PostEntity extends BaseEntity {
 
     @Column(name = "like_count")
     private Integer likeCount;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments;
+
+
+
+    // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
+    public Integer getViewCount(){
+        return viewCount !=null ? viewCount : 0;
+    }
+
+    public Integer getLikeCount(){
+        return likeCount !=null ? likeCount : 0;
+    }
+
+
+
+
+
+
+    public static PostEntity ToPostEntity(PostRequestDto dto){
+
+        CommonEntity common=new CommonEntity();
+
+        common.setCodeId(dto.getCommonId());
+
+        return  PostEntity.builder()
+                .id(dto.getId())
+                .common(common)
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .build();
+
+    }
+
 
 
 }

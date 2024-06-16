@@ -54,6 +54,10 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMemberGroupEntity> chatList;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostEntity> postList;
+
+
 
     public static MemberEntity toMemberEntity(MemberDto dto) {
         return MemberEntity.builder()
