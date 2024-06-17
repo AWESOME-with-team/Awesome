@@ -154,7 +154,6 @@ public class PostServiceImpl implements PostService {
                     if(postResponseDto.getContent().length()>50){
                         String content = postResponseDto.getContent().substring(0, 50)+"...";
                         postResponseDto.setContent(content);
-
                     }
                     postResponseDtoList.add(postResponseDto);
                 }

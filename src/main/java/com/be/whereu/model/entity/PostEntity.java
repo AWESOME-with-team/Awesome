@@ -47,6 +47,7 @@ public class PostEntity extends BaseEntity {
 
 
 
+
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
     public Integer getViewCount(){
         return viewCount !=null ? viewCount : 0;
