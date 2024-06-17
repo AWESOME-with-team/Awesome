@@ -31,4 +31,5 @@ public class ChatListDto {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.lastChatAt = lastChatAt != null ? lastChatAt.format(formatter) : null;
     }
+
 }

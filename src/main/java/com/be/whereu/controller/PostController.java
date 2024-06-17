@@ -8,6 +8,7 @@ import com.be.whereu.model.dto.board.PostResponseDto;
 import com.be.whereu.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,7 +94,7 @@ public class PostController {
      * @param id
      * @return
      */
-    @GetMapping("/post{id}")
+    @GetMapping("/post/{id}")
     public ResponseEntity<PostResponseDto> getPost(@PathVariable("id") Long id){
         try {
             PostResponseDto postResponseDto = postService.getPost(id);
@@ -115,7 +116,7 @@ public class PostController {
      * @param pageNumber
      * @return
      */
-    @GetMapping("/post/list{id}")
+    @GetMapping("/post/list/{id}")
     public ResponseEntity<List<PostResponseDto>> getPostList(@PathVariable("id") Long id, int pageNumber) {
         try {
             List<PostResponseDto> postResponseDtoList = postService.getPostList(id ,pageNumber);
@@ -131,18 +132,18 @@ public class PostController {
      * @return List<boardListDto>
      */
     @GetMapping("/list")
-    public ResponseEntity<List<BoardListDto>> boardList(int pageNumber){
+    public ResponseEntity<List<BoardListDto>> boardList(
+            @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber) {
         try {
-
             List<BoardListDto> boardListDtos = postService.getBoardList(pageNumber);
-
             return ResponseEntity.ok(boardListDtos);
         } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
+            // INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }
     }
+
 
     /**
      * 좋아요 +

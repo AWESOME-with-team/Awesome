@@ -188,7 +188,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageNumber, BOARD_PAGE_SIZE, Sort.by("id").descending());
         try {
             List<BoardListDto> result = new ArrayList<>();
-            for (long i = 1001L; i <= 1003L; i++) {
+            for (long i = 1001L; i <= 1010L; i++) {
                 CommonEntity commonEntity = commonRepository.findById(i)
                         .orElseThrow(() -> new IllegalArgumentException("Not Found CommonData"));
                 List<BoardListDto> list = postRepository.findByCommonOrderByIdDesc(commonEntity,pageable).stream()
