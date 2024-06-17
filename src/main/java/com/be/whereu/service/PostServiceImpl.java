@@ -2,6 +2,7 @@ package com.be.whereu.service;
 
 
 import com.be.whereu.exception.ResourceNotFoundException;
+import com.be.whereu.model.dto.board.BoardDetailsListDto;
 import com.be.whereu.model.dto.board.BoardListDto;
 import com.be.whereu.model.dto.board.PostRequestDto;
 import com.be.whereu.model.dto.board.PostResponseDto;
@@ -9,6 +10,7 @@ import com.be.whereu.model.entity.CommonEntity;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.PostEntity;
 
+import com.be.whereu.repository.CommentRepository;
 import com.be.whereu.repository.CommonRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.PostRepository;
@@ -17,10 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
@@ -43,6 +42,7 @@ public class PostServiceImpl implements PostService {
 
     private static final int POST_PAGE_SIZE = 10;
     private static final int BOARD_PAGE_SIZE = 5;
+    private final CommentRepository commentRepository;
 
     // 게시물 등록
     @Transactional
@@ -141,44 +141,19 @@ public class PostServiceImpl implements PostService {
     //게시물 리스트 불러오기
     @Transactional
     @Override
-    public List<PostResponseDto> getPostList(Long id, int pageNumber) {
+    public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNumber) {
 
         Pageable pageable = PageRequest.of(pageNumber, POST_PAGE_SIZE, Sort.by("id").descending());
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-
+        Page<BoardDetailsListDto> boardDetailsListDto = new PageImpl<BoardDetailsListDto>(new ArrayList<BoardDetailsListDto>());
         try {
-            if (id == null) { // commonId가 null이면 모든 게시물을 가져옴
-                Page<PostEntity> postEntities = postRepository.findAll(pageable);
-                for (PostEntity postEntity : postEntities) {
-                    PostResponseDto postResponseDto = PostResponseDto.toDto(postEntity);
-                    if(postResponseDto.getContent().length()>50){
-                        String content = postResponseDto.getContent().substring(0, 50)+"...";
-                        postResponseDto.setContent(content);
-                    }
-                    postResponseDtoList.add(postResponseDto);
-                }
-            } else { // commonId가 null이 아니면 해당 commonId에 해당하는 게시물만 가져옴
-                CommonEntity commonEntity = new CommonEntity();
-                commonEntity.setCodeId(id);
-                Page<PostEntity> postEntities = postRepository.findByCommonOrderByIdDesc(commonEntity, pageable);
-                for (PostEntity postEntity : postEntities) {
-                    PostResponseDto postResponseDto = PostResponseDto.toDto(postEntity);
-                    if(postResponseDto.getContent().length()>50){
-                        String content = postResponseDto.getContent().substring(0, 50)+"...";
-                        postResponseDto.setContent(content);
-
-                    }
-                    postResponseDtoList.add(postResponseDto);
-                }
-            }
+            boardDetailsListDto=postRepository.findByCommonIdOrderByIdDescWithCommentCount(id,pageable);
         } catch (DataAccessException e) {
             log.error("DataBase access error", e);
         } catch (Exception e) {
             log.error("An unexpected error", e);
         }
 
-
-        return postResponseDtoList;
+        return boardDetailsListDto.stream().toList();
     }
     //게시판 List 리스트 불러오기
     @Transactional
@@ -187,7 +162,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageNumber, BOARD_PAGE_SIZE, Sort.by("id").descending());
         try {
             List<BoardListDto> result = new ArrayList<>();
-            for (long i = 1001L; i <= 1003L; i++) {
+            for (long i = 1001L; i <= 1010L; i++) {
                 CommonEntity commonEntity = commonRepository.findById(i)
                         .orElseThrow(() -> new IllegalArgumentException("Not Found CommonData"));
                 List<BoardListDto> list = postRepository.findByCommonOrderByIdDesc(commonEntity,pageable).stream()
@@ -223,6 +198,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponseDto likePost(Long id) {
         try{
+
             PostEntity postEntity = postRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
             postEntity.setLikeCount(postEntity.getLikeCount()+1);

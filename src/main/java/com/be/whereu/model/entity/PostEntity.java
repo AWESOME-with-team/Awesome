@@ -6,7 +6,9 @@ import com.be.whereu.model.dto.board.PostResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,6 +48,14 @@ public class PostEntity extends BaseEntity {
     private List<CommentEntity> comments;
 
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "post_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private Set<MemberEntity> likedMembers = new HashSet<>();
 
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
