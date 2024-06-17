@@ -15,7 +15,7 @@ import java.util.List;
 
 
 
-public interface SecurityContextManager {
+public interface   SecurityContextManager {
 
     public void setUpSecurityContext(WhereUJwt accessToken, HttpServletRequest request);
 
