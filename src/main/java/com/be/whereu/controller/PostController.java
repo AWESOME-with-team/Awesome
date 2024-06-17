@@ -2,6 +2,7 @@ package com.be.whereu.controller;
 
 
 
+import com.be.whereu.model.dto.board.BoardDetailsListDto;
 import com.be.whereu.model.dto.board.BoardListDto;
 import com.be.whereu.model.dto.board.PostRequestDto;
 import com.be.whereu.model.dto.board.PostResponseDto;
@@ -68,8 +69,8 @@ public class PostController {
      * @param id
      * @return
      */
-    @DeleteMapping("/post{id}")
-    public ResponseEntity<Boolean> deletePost(@PathVariable Long id){
+    @DeleteMapping("/post")
+    public ResponseEntity<Boolean> deletePost(@RequestParam("postId") Long id){
 
         try{
             boolean isSuccess= postService.deletePost(id);
@@ -112,14 +113,14 @@ public class PostController {
     /**
      * 게시물 리스트 가져오기
      * @param id
-     * @param pageNumber
+     * @param pageNum
      * @return
      */
-    @GetMapping("/post/list{id}")
-    public ResponseEntity<List<PostResponseDto>> getPostList(@PathVariable("id") Long id, int pageNumber) {
+    @GetMapping("/post/list")
+    public ResponseEntity<List<BoardDetailsListDto>> getPostList(@RequestParam("commonId") Long id, @RequestParam("pageNum") int pageNum) {
         try {
-            List<PostResponseDto> postResponseDtoList = postService.getPostList(id ,pageNumber);
-            return ResponseEntity.ok(postResponseDtoList);
+            List<BoardDetailsListDto> boardDetailsListDto = postService.getBoardDetailsList(id , pageNum);
+            return ResponseEntity.ok(boardDetailsListDto);
         } catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.status(500).body(Collections.emptyList());
@@ -131,10 +132,10 @@ public class PostController {
      * @return List<boardListDto>
      */
     @GetMapping("/list")
-    public ResponseEntity<List<BoardListDto>> boardList(int pageNumber){
+    public ResponseEntity<List<BoardListDto>> boardList(@RequestParam("pageNum") int pageNum){
         try {
 
-            List<BoardListDto> boardListDtos = postService.getBoardList(pageNumber);
+            List<BoardListDto> boardListDtos = postService.getBoardList(pageNum);
 
             return ResponseEntity.ok(boardListDtos);
         } catch (Exception e) {
@@ -149,8 +150,8 @@ public class PostController {
      * @param id
      * @return
      */
-    @PostMapping("/post/like/{id}")
-    public ResponseEntity<PostResponseDto> likePost(@PathVariable("id") Long id){
+    @PostMapping("/post/like")
+    public ResponseEntity<PostResponseDto> likePost(@RequestParam("postId") Long id){
         try {
             PostResponseDto postResponseDto = postService.likePost(id);
             return ResponseEntity.ok(postResponseDto);
@@ -167,8 +168,8 @@ public class PostController {
      * @param id
      * @return
      */
-    @PostMapping("/post/unlike/{id}")
-    public ResponseEntity<PostResponseDto> unLikePost(@PathVariable("id") Long id){
+    @PostMapping("/post/unlike")
+    public ResponseEntity<PostResponseDto> unLikePost(@RequestParam("postId") Long id){
         try {
             PostResponseDto postResponseDto = postService.unlikePost(id);
             return ResponseEntity.ok(postResponseDto);
@@ -185,8 +186,8 @@ public class PostController {
      * @param id
      * @return
      */
-    @PostMapping("/post/view-count/{id}")
-    public ResponseEntity<PostResponseDto> viewPostCount(@PathVariable("id") Long id){
+    @PostMapping("/post/view-count")
+    public ResponseEntity<PostResponseDto> viewPostCount(@RequestParam("postId") Long id){
         try {
             PostResponseDto postResponseDto = postService.viewCountPost(id);
             return ResponseEntity.ok(postResponseDto);

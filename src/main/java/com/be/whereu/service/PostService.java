@@ -1,5 +1,6 @@
 package com.be.whereu.service;
 
+import com.be.whereu.model.dto.board.BoardDetailsListDto;
 import com.be.whereu.model.dto.board.BoardListDto;
 import com.be.whereu.model.dto.board.PostRequestDto;
 import com.be.whereu.model.dto.board.PostResponseDto;
@@ -12,7 +13,7 @@ public interface PostService {
     public PostResponseDto updatePost(PostRequestDto dto);
     public boolean deletePost(Long id);
     public PostResponseDto getPost(Long id);
-    public List<PostResponseDto> getPostList(Long id, int pageNumber);
+    public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNumber);
     public List<BoardListDto> getBoardList(int pageNumber);
     public PostResponseDto likePost(Long id);
     public PostResponseDto unlikePost(Long id);
