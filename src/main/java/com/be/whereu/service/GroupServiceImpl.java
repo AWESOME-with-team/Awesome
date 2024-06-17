@@ -21,7 +21,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -110,82 +109,101 @@ public class GroupServiceImpl implements GroupService {
             throw new CustomServiceException("Failed to get group Detail", e);
         }
     }
-
+    /**
+     *
+     * @param groupId
+     * @param nick
+     * @return 그룹 초대 받았을때 group_rquest_tbl 에 추가 하는 메소드
+     */
     @Transactional
     @Override
-    public List<GroupRequestEntity> groupRequest(Long groupId, List<String> nick) {
-        GroupEntity group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+    public boolean addMemberInRequestGroup(Long groupId, String nick) {
 
-        List<GroupRequestEntity> requests = nick.stream().map(nickName -> {
-            MemberEntity member = memberRepository.findByNick(nickName);
-
-            return GroupRequestEntity.builder()
-                    .group(group)
-                    .member(member)
-                    .build();
-        }).collect(Collectors.toList());
-
-        return groupRequestRepository.saveAll(requests);
-    }
-
-    @Override
-    public void acceptGroupRequest(Long requestId) {
-        GroupRequestEntity request = groupRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
-
-        // 초대 요청을 수락 처리
-        MemberGroupEntity memberGroup = MemberGroupEntity.builder()
-                .group(request.getGroup())
-                .member(request.getMember())
-                .build();
-        memberGroupRepository.save(memberGroup);
-
-        // 그룹 멤버 수 업데이트
-        GroupEntity group = request.getGroup();
-        group.setTotal(group.getTotal() + 1);
-        groupRepository.save(group);
-
-        // 초대 요청 삭제
-        groupRequestRepository.delete(request);
-    }
-
-    @Override
-    public void rejectGroupRequest(Long requestId) {
-        GroupRequestEntity request = groupRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
-        // 초대 요청 삭제
-        groupRequestRepository.delete(request);
-    }
-
-    @Override
-    public GroupDto getData(long groupId) {
-        GroupEntity entity = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + groupId));
-        return GroupDto.toDto(entity);
-    }
-
-    @Override
-    public Optional<MemberEntity> searchMembersByNickName(String nickName) {
-        return Optional.ofNullable(memberRepository.findByNick(nickName));
-    }
-
-    //그룹 탈퇴
-    @Override
-    public void leaveGroup(Long memberId, Long groupId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new ResourceNotFoundException("Member ID not found");
+        MemberEntity memberEntity=memberRepository.findByNick(nick).orElseThrow(()-> new ResourceNotFoundException("no found userNick"+nick));
+        //요청받은 목록에 이미 있는 맴버일 경우 방지
+        if (groupRequestRepository.existsByGroupIdAndMemberId(groupId, memberEntity.getId())) {
+            // 이미 존재하는 요청이 있을 경우 false 반환
+            return false;
         }
-        if (!groupRepository.existsById(groupId)) {
-            throw new ResourceNotFoundException("Group ID not found");
-        }
-        memberGroupRepository.deleteByMemberIdAndGroupId(memberId, groupId);
+        GroupEntity groupEntity=new GroupEntity();
+        groupEntity.setId(groupId);
+        var groupRequest =new GroupRequestEntity();
+        groupRequest.setMember(memberEntity);
+        groupRequest.setGroup(groupEntity);
+        var entity = groupRequestRepository.save(groupRequest);
+        return entity.getId() > 0;
     }
 
     @Override
-    public GroupRequestDto getGroupRequestData(Long requestId) {
-        GroupRequestEntity entity = groupRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Group not found with id: " + requestId));
-        return GroupRequestDto.toDto(entity);
+    public List<GroupDto> getRequestGroupListToMe() {
+        Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
+        List<GroupRequestEntity> entityList= groupRequestRepository.requestGroupList(memberId).orElseThrow(
+                ()->new ResourceNotFoundException("not found List")
+        );
+
+
+        return entityList.stream()
+                        .map(groupRequestEntity -> GroupDto.toDto(groupRequestEntity.getGroup()))
+                        .toList();
     }
+
+    /**
+     * 
+     * @param groupId
+     * @return group 요청 수락시 수행로직 요청을 목록을 지우고 채팅방과 그룹에 참여시킨다
+     */
+    @Transactional
+    @Override
+    public boolean deleteRequestAndJoinGroup(Long groupId) {
+        boolean isSuccess = false;
+        Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
+
+        // 특정 그룹 ID와 회원 ID를 기반으로 그룹 요청 엔티티 삭제
+        groupRequestRepository.deleteByGroupRequestIdAndMemberId(groupId, memberId);
+
+        // 그룹 엔티티를 ID로 조회, 없으면 예외 발생
+        var groupEntity = groupRepository.findById(groupId).orElseThrow(
+                () -> new ResourceNotFoundException("No group found with id: " + groupId)
+        );
+
+        // 그룹의 총 인원 수 증가
+        groupEntity.setTotal(groupEntity.getTotal() + 1);
+
+        // 회원 엔티티 생성 및 설정
+        var memberEntity = new MemberEntity();
+        memberEntity.setId(memberId);
+
+        // 회원-그룹 엔티티 생성 및 설정
+        MemberGroupEntity memberGroupEntity = new MemberGroupEntity();
+        memberGroupEntity.setMember(memberEntity);
+        memberGroupEntity.setGroup(groupEntity);
+
+        // 회원-그룹 엔티티 저장
+        var memberGroup = memberGroupRepository.save(memberGroupEntity);
+        
+        // 그룹 채팅방에 참여
+        chatService.addMemberGroupChat(memberId,groupId);
+
+
+        // 저장된 엔티티의 ID가 null이 아닌지 확인하여 성공 여부 설정
+        if (memberGroup.getId() != null) {
+            isSuccess = true;
+        }
+
+
+        return isSuccess;
+    }
+
+    private boolean isMemberAlreadyRequested(Long groupId, String nick) {
+        MemberEntity memberEntity = memberRepository.findByNick(nick)
+                .orElseThrow(() -> new ResourceNotFoundException("No found userNick " + nick));
+        return groupRequestRepository.existsByGroupIdAndMemberId(groupId, memberEntity.getId());
+    }
+
 }
+
+
+
+
+
+

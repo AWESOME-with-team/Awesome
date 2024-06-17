@@ -61,6 +61,11 @@ dependencies {
 	// 대학인증 univcert libarary
 	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
+	runtimeOnly 'com.h2database:h2'
+
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.projectlombok:lombok'
+
 }
 
 tasks.named('test') {

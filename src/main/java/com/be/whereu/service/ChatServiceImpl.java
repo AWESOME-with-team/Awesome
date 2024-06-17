@@ -79,15 +79,25 @@ public class ChatServiceImpl implements ChatService {
      */
     @Transactional
     @Override
-    public void addMemberChat(Long memberId, Long chatId) {
-        MemberEntity member = memberRepository.findById(memberId).orElseThrow();
-        ChatEntity chat = chatRepository.findById(chatId).orElseThrow();
+    public void addMemberGroupChat(Long memberId, Long groupId) {
+
+        MemberEntity memberEntity=new MemberEntity();
+        memberEntity.setId(memberId);
+        GroupEntity groupEntity= new GroupEntity();
+        groupEntity.setId(groupId);
+        List<ChatMemberGroupEntity> chatMemberGroupEntity=chatMemberGroupRepository.findByGroupId(groupId).orElseThrow(
+                () -> new ResourceNotFoundException("Chat member group not found")
+        );
+        ChatEntity chat=chatMemberGroupEntity.stream().map(ChatMemberGroupEntity::getChat).findAny().get();
+        System.out.println(chat.getId());
         ChatMemberGroupEntity chatMember = new ChatMemberGroupEntity();
-        chatMember.setMember(member);
+        chatMember.setMember(memberEntity);
+        chatMember.setGroup(groupEntity);
         chatMember.setChat(chat);
         chatMemberGroupRepository.save(chatMember);
 
     }
+
     @Transactional
     @Override
     public boolean exitChat(Long memberId, Long chatId) {

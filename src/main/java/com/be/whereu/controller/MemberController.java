@@ -1,9 +1,7 @@
 package com.be.whereu.controller;
 
 
-import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
-import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.service.MemberSerivce;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,10 +50,10 @@ public class MemberController {
         return  ResponseEntity.ok().body(isNickExist);
     }
 
-    @GetMapping("/member/search/{nick}")
-    public  ResponseEntity<List<String>> getNickList(@PathVariable String nick) {
+    @GetMapping("/member/search/{nick}/{groupId}")
+    public  ResponseEntity<List<String>> getNickList(@PathVariable String nick , @PathVariable Long groupId) {
         System.out.println("nick ="+ nick);
-        List<String> result = memberSerivce.searchByNick(nick);
+        List<String> result = memberSerivce.searchNickListByGroupId(nick ,groupId);
         return ResponseEntity.ok(result);
     }
 

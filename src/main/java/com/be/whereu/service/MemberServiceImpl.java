@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberSerivce{
     @Override
     public Boolean findMemberNick(String nick) {
         boolean isNickExist = false;
-        MemberEntity entity= memberRepository.findByNick(nick);
+        MemberEntity entity= memberRepository.findByNick(nick).get();
         if(entity != null) {
             log.info("NickName is: {}", entity.getNick());
             isNickExist = true;
@@ -80,9 +80,16 @@ public class MemberServiceImpl implements MemberSerivce{
         return isNickExist;
     }
 
+    /**
+     *
+     * @param nick
+     * @param groupId
+     * @return 닉네임 리스트 (그룹에 이미 속해있는 맴버와 이미 해당그룹에 요청을 받은 맴버를 제외하고)
+     */
     @Override
-    public List<String> searchByNick(String nick) {
-        return  memberRepository.findByNickContaining(nick).orElseThrow(()-> new ResourceNotFoundException("no resource about "+nick))
+    public List<String> searchNickListByGroupId(String nick , Long groupId) {
+
+        return  memberRepository.findMemberListExcludingGroupMemberAndAlreadyRequestedList(nick, groupId).orElseThrow(()-> new ResourceNotFoundException("no resource about "+nick))
                 .stream()
                 .map(MemberEntity::getNick)
                 .toList();

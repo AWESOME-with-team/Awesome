@@ -28,9 +28,6 @@ public class MemberDto {
     private String modifiedAt;
     private String gender;
 
-//    private List<MemberGroupEntity> GroupList;
-//    private SchoolEntity school;
-//    private List<ChatMemberEntity> chatList;
 
 
     public static MemberDto toDto(MemberEntity memberEntity) {
@@ -44,9 +41,6 @@ public class MemberDto {
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
                 .gender(memberEntity.getGender().name())
                 .birth(memberEntity.getBirth())
-//                .GroupList(memberEntity.getGroupList())
-//                .school(memberEntity.getSchool())
-//                .chatList(memberEntity.getChatList())
                 .build();
 
     }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ChatService {
     public void createChatByGroup(Long groupId);
-    public void addMemberChat(Long memberId, Long chatId);
+    public void addMemberGroupChat(Long memberId, Long groupId);
     public boolean exitChat(Long memberId,Long chatId);
     public List<ChatListDto> getChatList();
 
