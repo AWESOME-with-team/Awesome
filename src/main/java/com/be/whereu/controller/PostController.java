@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 등록 ( 등록시 id 제외가능)
+     * 게시글 등록 ( id 제외하고 입력)
      * @param postRequestDto
      * @return
      */
@@ -94,8 +94,8 @@ public class PostController {
      * @param id
      * @return
      */
-    @GetMapping("/post{id}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable("id") Long id){
+    @GetMapping("/post")
+    public ResponseEntity<PostResponseDto> getPost(@RequestParam("postId") Long id){
         try {
             PostResponseDto postResponseDto = postService.getPost(id);
             return ResponseEntity.ok(postResponseDto);

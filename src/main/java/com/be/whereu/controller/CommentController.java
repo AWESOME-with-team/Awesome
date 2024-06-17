@@ -24,8 +24,8 @@ public class CommentController {
      * @param id
      * @return
      */
-    @GetMapping("/comment{id}")
-    public ResponseEntity<CommentResponseDto> getComment(@PathVariable("id") Long id) {
+    @GetMapping("/comment")
+    public ResponseEntity<CommentResponseDto> getComment(@RequestParam("commentId") Long id) {
         try{
             CommentResponseDto commentResponseDto = commentService.getComment(id);
             return ResponseEntity.ok(commentResponseDto);
@@ -39,14 +39,14 @@ public class CommentController {
 
     /**
      * 댓글 리스트 가져오기
-     * @param postId
-     * @param pageNumber
+     * @param id
+     * @param pageNum
      * @return
      */
     @GetMapping("/comment/list")
-    public ResponseEntity<List<CommentResponseDto>> commentList(@RequestParam Long postId,int pageNumber) {
+    public ResponseEntity<List<CommentResponseDto>> commentList(@RequestParam("postId") Long id, @RequestParam("pageNum") int pageNum) {
         try{
-            List<CommentResponseDto> commentList = commentService.getCommentList(postId,pageNumber);
+            List<CommentResponseDto> commentList = commentService.getCommentList(id, pageNum);
             return  ResponseEntity.ok(commentList);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
@@ -56,7 +56,7 @@ public class CommentController {
     }
 
     /**
-     * 댓글 ,대댓글 등록 (id 제외하고 입력 가능)
+     * 댓글 ,대댓글 등록 (id 제외하고 입력 )
      * @param commentRequestDto
      * @return
      */
@@ -94,8 +94,8 @@ public class CommentController {
      * @param id
      * @return
      */
-    @DeleteMapping("/comment/{id}")
-    public ResponseEntity<Boolean> deleteComment(@PathVariable Long id) {
+    @DeleteMapping("/comment")
+    public ResponseEntity<Boolean> deleteComment(@RequestParam("commentId") Long id) {
         try{
             boolean isSuccess = commentService.deleteComment(id);
             return ResponseEntity.ok(isSuccess);
@@ -112,8 +112,8 @@ public class CommentController {
      * @param id
      * @return
      */
-    @PostMapping("/like/{id}")
-    public ResponseEntity<CommentResponseDto> likeComment(@PathVariable Long id) {
+    @PostMapping("/like")
+    public ResponseEntity<CommentResponseDto> likeComment(@RequestParam("commentId") Long id) {
         try {
             CommentResponseDto dto = commentService.likeComment(id);
             return ResponseEntity.ok(dto);
@@ -129,8 +129,8 @@ public class CommentController {
      * @param id
      * @return
      */
-    @PostMapping("/unlike/{id}")
-    public ResponseEntity<CommentResponseDto> unlikeComment(@PathVariable Long id) {
+    @PostMapping("/unlike")
+    public ResponseEntity<CommentResponseDto> unlikeComment(@RequestParam("commentId") Long id) {
         try {
             CommentResponseDto dto = commentService.unlikeComment(id);
             return ResponseEntity.ok(dto);

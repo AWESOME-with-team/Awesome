@@ -40,7 +40,7 @@ public class PostServiceImpl implements PostService {
     private final CommonRepository commonRepository;
 
 
-    private static final int POST_PAGE_SIZE = 10;
+    private static final int POST_PAGE_SIZE = 15;
     private static final int BOARD_PAGE_SIZE = 5;
     private final CommentRepository commentRepository;
 
