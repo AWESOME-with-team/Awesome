@@ -38,7 +38,6 @@ public class GroupServiceImpl implements GroupService {
     public boolean createGroup(GroupDto groupDto) {
         try {
             log.info("groupDto :{}", groupDto.toString());
-            groupDto.setGender(groupDto.getGender());
             groupDto.setTotal(1);
             Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
             groupDto.setHostId(memberId);
