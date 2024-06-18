@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
 
@@ -27,6 +29,20 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
 
     Page<PostEntity> findByCommonOrderByIdDesc(CommonEntity commonEntity, Pageable pageable);
+
+
+    @Query("SELECT new com.be.whereu.model.dto.board.BoardListDto(c.codeId, c.codeName, p.title) " +
+            "FROM PostEntity p " +
+            "LEFT JOIN p.common c " +
+            "WHERE c.parentCodeId = 1000 " +
+            "AND p.id IN (" +
+            "    SELECT MAX(p2.id) " +
+            "    FROM PostEntity p2 " +
+            "    WHERE p2.common.parentCodeId = 1000 " +
+            "    GROUP BY p2.common.codeId " +
+            ")" +
+            "ORDER BY p.common.codeId")
+    List<BoardListDto> findByParentIdByWithLastPostTitle(Pageable pageable);
 
 }
 
