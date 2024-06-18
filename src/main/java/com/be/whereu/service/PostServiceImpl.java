@@ -177,15 +177,21 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNumber) {
 
+        Long memberId=Long.parseLong(securityContextManager.getAuthenticatedUserName());
         Pageable pageable = PageRequest.of(pageNumber, POST_PAGE_SIZE, Sort.by("id").descending());
         Page<BoardDetailsListDto> boardDetailsListDto = new PageImpl<BoardDetailsListDto>(new ArrayList<BoardDetailsListDto>());
         try {
-            boardDetailsListDto=postRepository.findByCommonIdOrderByIdDescWithCommentCount(id,pageable);
+            boardDetailsListDto=postRepository.findByCommonIdOrderByIdDescWithCommentCount(id,memberId,pageable);
+            var list=boardDetailsListDto.stream().toList();
+            for(BoardDetailsListDto boardDetailsListDto1:list){
+                System.out.println(boardDetailsListDto1.getIsLiked());
+            }
         } catch (DataAccessException e) {
             log.error("DataBase access error", e);
         } catch (Exception e) {
             log.error("An unexpected error", e);
         }
+
 
         return boardDetailsListDto.stream().toList();
     }

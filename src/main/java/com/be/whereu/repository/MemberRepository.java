@@ -38,4 +38,18 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
             "    WHERE gr.group.id = :groupId" +
             ")")
     Optional<List<MemberEntity>> findMemberListExcludingGroupMemberAndAlreadyRequestedList(@Param("nick") String nick, @Param("groupId") Long groupId);
+
+    @Query("SELECT m FROM MemberEntity m " +
+            "LEFT JOIN FETCH m.GroupList mg " +
+            "WHERE m.nick LIKE %:nick% " +
+            "AND m.gender = (SELECT g.gender FROM GroupEntity g WHERE g.id = :groupId) " +
+            "AND m.id NOT IN (" +
+            "    SELECT mg.member.id FROM MemberGroupEntity mg " +
+            "    WHERE mg.group.id = :groupId" +
+            ") " +
+            "AND m.id NOT IN (" +
+            "    SELECT gr.member.id FROM GroupRequestEntity gr " +
+            "    WHERE gr.group.id = :groupId" +
+            ")")
+    Optional<List<MemberEntity>> findMemberListExcludingGroupMemberAndAnotherGenderAndAlreadyRequestedList(@Param("nick") String nick, @Param("groupId") Long groupId);
 }

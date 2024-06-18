@@ -9,6 +9,7 @@ import com.be.whereu.model.dto.board.PostResponseDto;
 import com.be.whereu.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -117,7 +118,7 @@ public class PostController {
      * @return
      */
     @GetMapping("/post/list")
-    public ResponseEntity<List<BoardDetailsListDto>> getPostList(@RequestParam("commonId") Long id, @RequestParam("pageNum") int pageNum) {
+    public ResponseEntity<List<BoardDetailsListDto>> getPostList(@RequestParam("commonId") Long id,  @RequestParam(value = "pageNum", defaultValue = "0") int pageNum) {
         try {
             List<BoardDetailsListDto> boardDetailsListDto = postService.getBoardDetailsList(id , pageNum);
             return ResponseEntity.ok(boardDetailsListDto);
@@ -132,16 +133,15 @@ public class PostController {
      * @return List<boardListDto>
      */
     @GetMapping("/list")
-    public ResponseEntity<List<BoardListDto>> boardList(@RequestParam("pageNum") int pageNum){
+    public ResponseEntity<List<BoardListDto>> boardList(@RequestParam(value = "pageNum", defaultValue = "0") int pageNum){
         try {
-
             List<BoardListDto> boardListDtos = postService.getBoardList(pageNum);
 
             return ResponseEntity.ok(boardListDtos);
         } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
+            // INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }
     }
 
