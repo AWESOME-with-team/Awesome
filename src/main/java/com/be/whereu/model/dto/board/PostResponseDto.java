@@ -31,6 +31,7 @@ public class PostResponseDto {
 
 
 
+
     public void CreatedDate(LocalDateTime CreatedDate){
         // LocalDate to String
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

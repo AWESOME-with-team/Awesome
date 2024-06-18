@@ -11,6 +11,7 @@ import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.PostEntity;
 
 import com.be.whereu.model.entity.PostLikeEntity;
+import com.be.whereu.model.isLike;
 import com.be.whereu.repository.*;
 import com.be.whereu.security.authentication.SecurityContextManager;
 import jakarta.transaction.Transactional;
@@ -39,8 +40,9 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
 
 
+
     private static final int POST_PAGE_SIZE = 15;
-    private static final int BOARD_PAGE_SIZE = 5;
+    private static final int BOARD_PAGE_SIZE = 10;
     private final CommentRepository commentRepository;
 
 
@@ -59,11 +61,14 @@ public class PostServiceImpl implements PostService {
 
             if (isLiked) {
                 postLikeRepository.deleteByPostIdAndMemberId(postId, memberId); //좋아요 취소
+
             } else {
                 PostLikeEntity postLike = PostLikeEntity.toEntity(post, member);// 좋아요 성공
+
                 postLikeRepository.save(postLike);
+                postRepository.save(post);
             }
-                PostEntity entity= postRepository.save(post);
+
             return !isLiked; //true이면 좋아요 성공 false이면 좋아요 취소
         } catch (DataAccessException e) {
 
@@ -225,41 +230,7 @@ public class PostServiceImpl implements PostService {
 
 
     }
-    @Transactional
-    @Override
-    public PostResponseDto likePost(Long id) {
-        try{
 
-            PostEntity postEntity = postRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
-           // postEntity.setLikeCount(postEntity.getLikeCount()+1);
-            return PostResponseDto.toDto(postEntity);
-        }catch (DataAccessException e){
-            log.error("DataBase access error",e);
-            return null;  //빈리스트 반환
-        }catch (Exception e){
-            log.error("An unexpected error",e);
-            return null;
-        }
-
-    }
-    @Transactional
-    @Override
-    public PostResponseDto unlikePost(Long id) {
-        try{
-            PostEntity postEntity = postRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
-          //  postEntity.setLikeCount(postEntity.getLikeCount()-1);
-            return PostResponseDto.toDto(postEntity);
-        }catch (DataAccessException e){
-            log.error("DataBase access error",e);
-            return null;  //빈리스트 반환
-        }catch (Exception e){
-            log.error("An unexpected error",e);
-            return null;
-        }
-
-    }
 
     @Transactional
     @Override

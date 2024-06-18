@@ -3,6 +3,7 @@ package com.be.whereu.model.entity;
 
 import com.be.whereu.model.dto.board.PostRequestDto;
 import com.be.whereu.model.dto.board.PostResponseDto;
+import com.be.whereu.model.isLike;
 import jakarta.persistence.*;
 import lombok.*;
 

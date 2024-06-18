@@ -21,7 +21,7 @@ public class CommentResponseDto {
     private Long postId;
     private MemberDto member;
     private String content;
-    private Integer likeCount;
+    private Long likeCount;
     private Long parentId;
     private String createDate;
     private String modifyDate;
@@ -29,10 +29,19 @@ public class CommentResponseDto {
 
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
-    public Integer getLikeCount() {
+    public Long getLikeCount() {
         return likeCount != null ? likeCount : 0;
     }
 
+    public CommentResponseDto(Long id, Long postId, MemberDto member, String content, Long likeCount, Long parentId, LocalDateTime createDate) {
+        this.id = id;
+        this.postId = postId;
+        this.member = member;
+        this.content = content;
+        this.likeCount = likeCount;
+        this.parentId = parentId;
+        this.createDate = createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
 
 
 
@@ -49,7 +58,7 @@ public class CommentResponseDto {
                 .postId(commentEntity.getPost().getId())
                 .member(MemberDto.toDto(commentEntity.getMember()))
                 .content(commentEntity.getContent())
-                .likeCount(commentEntity.getLikeCount())
+                //.likeCount(commentEntity.getLikeCount())
                 .createDate(commentEntity.getCreateAt().format(formatter))
                 .modifyDate(commentEntity.getModifiedAt().format(formatter))
                 .parentId(commentEntity.getParent() != null ? commentEntity.getParent().getId() : null)

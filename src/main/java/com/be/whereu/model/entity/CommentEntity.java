@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -34,9 +35,6 @@ public class CommentEntity extends BaseEntity{
     @Column(nullable = false)
     private String content;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "parent_id" ,foreignKey = @ForeignKey(name = "comment_parent_fk"))
@@ -45,10 +43,9 @@ public class CommentEntity extends BaseEntity{
     @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> children;
 
-    // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
-    public Integer getLikeCount(){
-        return likeCount !=null ? likeCount : 0;
-    }
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CommentLikeEntity> likeComments;
+
 
     public static CommentEntity toEntity(CommentRequestDto CommentRequestDto) {
         if (CommentRequestDto == null) {

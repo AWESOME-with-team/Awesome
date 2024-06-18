@@ -1,6 +1,7 @@
 package com.be.whereu.repository;
 
 import com.be.whereu.model.dto.board.BoardDetailsListDto;
+import com.be.whereu.model.dto.board.BoardListDto;
 import com.be.whereu.model.entity.CommonEntity;
 import com.be.whereu.model.entity.PostEntity;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,6 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
 
     Page<PostEntity> findByCommonOrderByIdDesc(CommonEntity commonEntity, Pageable pageable);
-
 
 }
 

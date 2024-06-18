@@ -113,10 +113,10 @@ public class CommentController {
      * @return
      */
     @PostMapping("/like")
-    public ResponseEntity<CommentResponseDto> likeComment(@RequestParam("commentId") Long id) {
+    public ResponseEntity<Boolean> commentLike(@RequestParam("commentId") Long id) {
         try {
-            CommentResponseDto dto = commentService.likeComment(id);
-            return ResponseEntity.ok(dto);
+            boolean likeStatus=commentService.toggleLikeComment(id);
+            return ResponseEntity.ok(likeStatus);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
@@ -124,21 +124,5 @@ public class CommentController {
         }
     }
 
-    /**
-     * 댓글 좋아요 -
-     * @param id
-     * @return
-     */
-    @PostMapping("/unlike")
-    public ResponseEntity<CommentResponseDto> unlikeComment(@RequestParam("commentId") Long id) {
-        try {
-            CommentResponseDto dto = commentService.unlikeComment(id);
-            return ResponseEntity.ok(dto);
-        } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
 
-    }
 }

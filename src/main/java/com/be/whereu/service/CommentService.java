@@ -11,6 +11,5 @@ public interface CommentService {
     public CommentResponseDto addComment(CommentRequestDto commentRequestDto);
     public CommentResponseDto updateComment(CommentRequestDto commentRequestDto);
     public boolean deleteComment(Long id);
-    public CommentResponseDto likeComment(Long id);
-    public CommentResponseDto unlikeComment(Long id);
+    public boolean toggleLikeComment(Long id);
 }

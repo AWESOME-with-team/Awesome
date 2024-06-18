@@ -23,6 +23,7 @@ public class BoardDetailsListDto {
     private Long commentCount;
     private Long likeCount;
 
+
     public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.postId = postId;
@@ -32,6 +33,7 @@ public class BoardDetailsListDto {
         this.createDate = createDate.format(formatter);
         this.commentCount = commentCount;
         this.likeCount = likeCount;
+
 
 
     }
