@@ -14,15 +14,20 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
     Page<PostEntity> findAll(Pageable pageable);
 
-    @Query("SELECT new com.be.whereu.model.dto.board.BoardDetailsListDto(p.id, m.nick, p.title, p.content, p.createAt, COUNT(c.id)) " +
+    @Query("SELECT new com.be.whereu.model.dto.board.BoardDetailsListDto(p.id, m.nick, p.title, p.content, p.createAt, COUNT(distinct c.id), COUNT(distinct l.id)) " +
             "FROM PostEntity p " +
             "LEFT JOIN p.member m " +
             "LEFT JOIN p.comments c " +
-            "WHERE p.common.id = :commonId " +
+            "Left Join p.likedMembers l "+
+            "WHERE p.common.codeId = :commonId " +
             "GROUP BY p.id, m.nick, p.title, p.content, p.createAt " +
             "ORDER BY p.id DESC")
     Page<BoardDetailsListDto> findByCommonIdOrderByIdDescWithCommentCount(@Param("commonId") Long commonId, Pageable pageable);
+
+
     Page<PostEntity> findByCommonOrderByIdDesc(CommonEntity commonEntity, Pageable pageable);
+
+
 }
 
 

@@ -19,7 +19,7 @@ public class PostResponseDto {
     private Long commonId;  //게시판 번호
     private String title;
     private String content;
-    private Integer likeCount;  // 좋아요를 누르면 +1 다시누르면 -1
+    private Integer likeCount;
     private Integer viewCount; // 접속할 때 viewCount를  1씩 올려주는 api
     private String nick;
     private String createDate;
@@ -61,13 +61,19 @@ public class PostResponseDto {
                 .commonId(entity.getCommon().getCodeId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
-                .likeCount(entity.getLikeCount())
+              //  .likeCount(entity.getLikeCount())
                 .viewCount(entity.getViewCount())
                 .nick(entity.getMember().getNick())
                 .createDate(entity.getCreateAt().format(formatter))
                 .modifyDate(entity.getModifiedAt().format(formatter))
                 .School(entity.getMember().getUniversityName())
                 .build();
+    }
+
+    public static PostResponseDto toDtoWithLikes(PostEntity entity, Integer likeCount) {
+        PostResponseDto dto = PostResponseDto.toDto(entity);
+        dto.setLikeCount(likeCount);
+        return dto;
     }
 
 }

@@ -10,10 +10,8 @@ import com.be.whereu.model.entity.CommonEntity;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.PostEntity;
 
-import com.be.whereu.repository.CommentRepository;
-import com.be.whereu.repository.CommonRepository;
-import com.be.whereu.repository.MemberRepository;
-import com.be.whereu.repository.PostRepository;
+import com.be.whereu.model.entity.PostLikeEntity;
+import com.be.whereu.repository.*;
 import com.be.whereu.security.authentication.SecurityContextManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +36,43 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final SecurityContextManager securityContextManager;
     private final CommonRepository commonRepository;
+    private final PostLikeRepository postLikeRepository;
 
 
     private static final int POST_PAGE_SIZE = 15;
     private static final int BOARD_PAGE_SIZE = 5;
     private final CommentRepository commentRepository;
+
+
+    @Transactional
+    public boolean toggleLikePost(Long postId) {
+        try {
+            Long memberId= Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            MemberEntity member = new MemberEntity();
+            member.setId(memberId);
+
+            PostEntity post = postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
+
+
+            boolean isLiked = postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
+
+            if (isLiked) {
+                postLikeRepository.deleteByPostIdAndMemberId(postId, memberId); //좋아요 취소
+            } else {
+                PostLikeEntity postLike = PostLikeEntity.toEntity(post, member);// 좋아요 성공
+                postLikeRepository.save(postLike);
+            }
+                PostEntity entity= postRepository.save(post);
+            return !isLiked; //true이면 좋아요 성공 false이면 좋아요 취소
+        } catch (DataAccessException e) {
+
+            throw new RuntimeException("Database access error", e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("An unexpected error occurred", e);
+        }
+    }
 
     // 게시물 등록
     @Transactional
@@ -119,10 +149,11 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto getPost(Long id) {
         PostResponseDto postResponseDto = new PostResponseDto();
         try {
-            Optional<PostEntity> PostEntity= postRepository.findById(id);
+            Optional<PostEntity> postEntity= postRepository.findById(id);
             System.out.println();
-            if (PostEntity.isPresent()) {
-                postResponseDto = PostResponseDto.toDto(PostEntity.get());
+            if (postEntity.isPresent()) {
+                Integer likeCount=postLikeRepository.countLikesByPostId(id);
+                postResponseDto = PostResponseDto.toDtoWithLikes(postEntity.get(),likeCount);
             }else{
 
                 log.error("no Post found");
@@ -201,7 +232,7 @@ public class PostServiceImpl implements PostService {
 
             PostEntity postEntity = postRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
-            postEntity.setLikeCount(postEntity.getLikeCount()+1);
+           // postEntity.setLikeCount(postEntity.getLikeCount()+1);
             return PostResponseDto.toDto(postEntity);
         }catch (DataAccessException e){
             log.error("DataBase access error",e);
@@ -218,7 +249,7 @@ public class PostServiceImpl implements PostService {
         try{
             PostEntity postEntity = postRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
-            postEntity.setLikeCount(postEntity.getLikeCount()-1);
+          //  postEntity.setLikeCount(postEntity.getLikeCount()-1);
             return PostResponseDto.toDto(postEntity);
         }catch (DataAccessException e){
             log.error("DataBase access error",e);

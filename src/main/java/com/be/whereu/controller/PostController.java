@@ -145,41 +145,7 @@ public class PostController {
         }
     }
 
-    /**
-     * 좋아요 +
-     * @param id
-     * @return
-     */
-    @PostMapping("/post/like")
-    public ResponseEntity<PostResponseDto> likePost(@RequestParam("postId") Long id){
-        try {
-            PostResponseDto postResponseDto = postService.likePost(id);
-            return ResponseEntity.ok(postResponseDto);
-        } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
 
-    }
-
-    /**
-     * 좋아요 -
-     * @param id
-     * @return
-     */
-    @PostMapping("/post/unlike")
-    public ResponseEntity<PostResponseDto> unLikePost(@RequestParam("postId") Long id){
-        try {
-            PostResponseDto postResponseDto = postService.unlikePost(id);
-            return ResponseEntity.ok(postResponseDto);
-        } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
-
-    }
 
     /**
      * 조회수 +
@@ -192,6 +158,23 @@ public class PostController {
             PostResponseDto postResponseDto = postService.viewCountPost(id);
             return ResponseEntity.ok(postResponseDto);
         } catch (Exception e) {
+            //INTERNAL_SERVER_ERROR
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    /**
+     * 좋아요
+     * @param id
+     * @return
+     */
+    @PostMapping("/post/like")
+    public ResponseEntity<Boolean> postLike(@RequestParam("postId") Long id){
+        try {
+            boolean likeStatus=postService.toggleLikePost(id);
+            return ResponseEntity.ok(likeStatus);
+        }catch (Exception e){
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
             return ResponseEntity.status(500).body(null);
