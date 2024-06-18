@@ -201,7 +201,15 @@ public class PostServiceImpl implements PostService {
     public List<BoardListDto> getBoardList(int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, BOARD_PAGE_SIZE, Sort.by("id").descending());
         try {
-            return postRepository.findByParentIdByWithLastPostTitle(pageable);
+            Page<BoardListDto> boardListDto=postRepository.findByParentIdByWithLastPostTitle(pageable);
+            return boardListDto.stream()
+                    .map(dto->{
+                        if(dto.getLastPostTitle()==null){
+                            dto.setLastPostTitle("아직 게시글이 없어요! 먼저 입력해 봅시다!!");
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList()); // .Collect(..)변경가능한 List  , toList()변경불가능List
         }catch (DataAccessException e){
             log.error("DataBase access error",e);
             return Collections.emptyList();  //빈리스트 반환
