@@ -2,11 +2,10 @@ package com.be.whereu.service;
 
 import com.be.whereu.exception.ResourceNotFoundException;
 import com.be.whereu.model.dto.board.CommentRequestDto;
+import com.be.whereu.model.dto.board.CommentListResponseDto;
 import com.be.whereu.model.dto.board.CommentResponseDto;
-import com.be.whereu.model.dto.board.PostResponseDto;
-import com.be.whereu.model.entity.CommentEntity;
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.PostEntity;
+import com.be.whereu.model.entity.*;
+import com.be.whereu.repository.CommentLikeRepository;
 import com.be.whereu.repository.CommentRepository;
 import com.be.whereu.repository.MemberRepository;
 import com.be.whereu.repository.PostRepository;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +33,12 @@ public class CommentServiceImpl implements CommentService {
     private final SecurityContextManager securityContextManager;
 
     private final int COMMENT_PAGE_SIZE = 15;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     @Override
     public CommentResponseDto getComment(Long id) {
-        CommentResponseDto commentResponseDto= new CommentResponseDto();
+        CommentResponseDto commentResponseDto = new CommentResponseDto();
         try{
             Optional<CommentEntity> commentEntity= commentRepository.findById(id);
             if (commentEntity.isPresent()) {
@@ -54,31 +53,35 @@ public class CommentServiceImpl implements CommentService {
         }
         return commentResponseDto;
     }
-
     @Transactional
     @Override
-    public List<CommentResponseDto> getCommentList(Long postId, int pageNumber) {
+    public List<CommentListResponseDto> getCommentList(Long postId, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, COMMENT_PAGE_SIZE, Sort.by("id").descending());
         try {
-            List<CommentEntity> commentEntities = commentRepository.findByPostId(postId, pageable);
+            // 최상위 댓글들을 포함한 모든 댓글들을 한 번에 가져오는 쿼리 실행
+            List<CommentListResponseDto> allComments = commentRepository.findByPostIdWithLikeCount(postId, pageable);
 
-            Map<Long, CommentResponseDto> commentMap = new HashMap<>();
-            List<CommentResponseDto> topLevelComments = new ArrayList<>();
+            // 최상위 댓글들을 추출하여 리스트에 담음
+            List<CommentListResponseDto> topLevelComments = new ArrayList<>();
+            Map<Long, CommentListResponseDto> commentMap = new HashMap<>();
 
-            // 모든 댓글을 DTO로 변환하면서 부모-자식 관계 설정
-            for (CommentEntity comment : commentEntities) {
-                CommentResponseDto dto = CommentResponseDto.toDto(comment);
-                commentMap.put(dto.getId(), dto);
+            for (CommentListResponseDto comment : allComments) {
+                commentMap.put(comment.getId(), comment);
+                if (comment.getParentId() == null) {
+                    topLevelComments.add(comment);
+                }
+            }
 
-                if (dto.getParentId() == null) {
-                    topLevelComments.add(dto);
-                } else {
-                    CommentResponseDto parentDto = commentMap.get(dto.getParentId());
-                    if (parentDto != null) {
-                        if (parentDto.getChildren() == null) {
-                            parentDto.setChildren(new ArrayList<>());
+            // 자식 댓글들을 부모 댓글에 연결
+            for (CommentListResponseDto comment : allComments) {
+                Long parentId = comment.getParentId();
+                if (parentId != null) {
+                    CommentListResponseDto parentComment = commentMap.get(parentId);
+                    if (parentComment != null) {
+                        if (parentComment.getChildren() == null) {
+                            parentComment.setChildren(new ArrayList<>());
                         }
-                        parentDto.getChildren().add(dto);
+                        parentComment.getChildren().add(comment);
                     }
                 }
             }
@@ -96,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
     //댓글 등록
     @Transactional
     @Override
-    public CommentResponseDto addComment(CommentRequestDto commentRequestDto) {
+    public CommentListResponseDto addComment(CommentRequestDto commentRequestDto) {
         try{
 
             MemberEntity member = memberRepository.findById(Long.parseLong(securityContextManager.getAuthenticatedUserName()))
@@ -104,7 +107,7 @@ public class CommentServiceImpl implements CommentService {
             CommentEntity commentEntity= CommentEntity.toEntity(commentRequestDto);
             commentEntity.setMember(member);
             CommentEntity saveComment = commentRepository.save(commentEntity);
-            return CommentResponseDto.toDto(saveComment);
+            return CommentListResponseDto.toDto(saveComment);
         }catch (DataAccessException e){
             log.error("DataBase access error",e);
             return null;
@@ -118,7 +121,7 @@ public class CommentServiceImpl implements CommentService {
     //댓글 수정  content만 변경
     @Transactional
     @Override
-    public CommentResponseDto updateComment(CommentRequestDto commentRequestDto) {
+    public CommentListResponseDto updateComment(CommentRequestDto commentRequestDto) {
 
         try{
             CommentEntity commentEntity = commentRepository.findById(commentRequestDto.getId())
@@ -129,7 +132,7 @@ public class CommentServiceImpl implements CommentService {
             commentEntity.setMember(member);
             commentEntity.setContent(commentRequestDto.getContent());
 
-            return CommentResponseDto.toDto(commentEntity);
+            return CommentListResponseDto.toDto(commentEntity);
         }catch (DataAccessException e){
             log.error("DataBase access error",e);
             return null;
@@ -156,37 +159,32 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Override
-    @Transactional
-    public CommentResponseDto likeComment(Long id) {
-        try{
-            CommentEntity commentEntity = commentRepository.findById(id)
-                    .orElseThrow(()-> new ResourceNotFoundException("not found comment ID"));
-            commentEntity.setLikeCount(commentEntity.getLikeCount() + 1);
-            return CommentResponseDto.toDto(commentEntity);
-        }catch (DataAccessException e){
-            log.error("DataBase access error",e);
-            return null;
-        }catch (Exception e){
-            log.error("An unexpected error",e);
-            return null;
-        }
-    }
 
-    @Override
     @Transactional
-    public CommentResponseDto unlikeComment(Long id) {
+    @Override
+    public boolean toggleLikeComment(Long commentId) {
         try{
-            CommentEntity commentEntity = commentRepository.findById(id)
-                    .orElseThrow(()-> new ResourceNotFoundException("not found comment ID"));
-            commentEntity.setLikeCount(commentEntity.getLikeCount() - 1);
-            return CommentResponseDto.toDto(commentEntity);
-        }catch (DataAccessException e){
-            log.error("DataBase access error",e);
-            return null;
-        }catch (Exception e){
-            log.error("An unexpected error",e);
-            return null;
+            Long memberId= Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            MemberEntity member = new MemberEntity();
+            member.setId(memberId);
+
+            CommentEntity comment = commentRepository.findById(commentId)
+                    .orElseThrow(()-> new IllegalArgumentException("not found comment"));
+            boolean isLiked = commentLikeRepository.existsByCommentIdAndMemberId(commentId, memberId);
+            if (isLiked) {
+                commentLikeRepository.deleteByCommentIdAndMemberId(commentId, memberId); //좋아요 취소
+            } else {
+                CommentLikeEntity commentLike = CommentLikeEntity.toEntity(comment, member);// 좋아요 성공
+                commentLikeRepository.save(commentLike);
+            }
+            return !isLiked; //true이면 좋아요 성공 false이면 좋아요 취소
+        } catch (DataAccessException e) {
+
+            throw new RuntimeException("Database access error", e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("An unexpected error occurred", e);
+
         }
     }
 

@@ -31,6 +31,7 @@ public class PostResponseDto {
 
 
 
+
     public void CreatedDate(LocalDateTime CreatedDate){
         // LocalDate to String
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -61,7 +62,6 @@ public class PostResponseDto {
                 .commonId(entity.getCommon().getCodeId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
-              //  .likeCount(entity.getLikeCount())
                 .viewCount(entity.getViewCount())
                 .nick(entity.getMember().getNick())
                 .createDate(entity.getCreateAt().format(formatter))

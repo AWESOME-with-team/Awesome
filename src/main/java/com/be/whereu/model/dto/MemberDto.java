@@ -1,12 +1,14 @@
 package com.be.whereu.model.dto;
 
 
+import com.be.whereu.model.Gender;
 import com.be.whereu.model.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,6 +30,18 @@ public class MemberDto {
     private String modifiedAt;
     private String gender;
 
+    public MemberDto(Long id, String email, String nick, LocalDate birth, String universityEmail, String universityName, LocalDateTime createAt, LocalDateTime modifiedAt,  Gender gender) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        this.id = id;
+        this.email = email;
+        this.nick = nick;
+        this.birth = birth;
+        this.universityEmail = universityEmail;
+        this.universityName = universityName;
+        this.createAt = createAt.format(formatter);
+        this.modifiedAt = modifiedAt.format(formatter);
+        this.gender=gender.toString();
+    }
 
 
     public static MemberDto toDto(MemberEntity memberEntity) {

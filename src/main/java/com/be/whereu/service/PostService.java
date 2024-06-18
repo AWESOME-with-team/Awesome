@@ -15,8 +15,7 @@ public interface PostService {
     public PostResponseDto getPost(Long id);
     public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNumber);
     public List<BoardListDto> getBoardList(int pageNumber);
-    public PostResponseDto likePost(Long id);
-    public PostResponseDto unlikePost(Long id);
+
     public PostResponseDto viewCountPost(Long id);
     public boolean toggleLikePost(Long id);
 }

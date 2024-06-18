@@ -33,7 +33,7 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
 
 
-    Page<PostEntity> findAll(Pageable pageable);
+
 
     @Query("SELECT new com.be.whereu.model.dto.board.BoardDetailsListDto(p.id, m.nick, p.title, p.content, p.createAt, COUNT(distinct c.id), COUNT(distinct l.id), " +
             "CASE WHEN pl.id IS NOT NULL THEN true ELSE false END) " +
@@ -50,20 +50,22 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
 
 
-    Page<PostEntity> findByCommonOrderByIdDesc(CommonEntity commonEntity, Pageable pageable);
+
+
 
     @Query("SELECT new com.be.whereu.model.dto.board.BoardListDto(c.codeId, c.codeName, p.title) " +
-            "FROM PostEntity p " +
-            "LEFT JOIN p.common c " +
-            "WHERE c.parentCodeId = 1000 " +
+            "FROM CommonEntity c " +
+            "LEFT JOIN PostEntity p ON p.common.codeId = c.codeId " +
             "AND p.id IN (" +
             "    SELECT MAX(p2.id) " +
             "    FROM PostEntity p2 " +
             "    WHERE p2.common.parentCodeId = 1000 " +
             "    GROUP BY p2.common.codeId " +
             ")" +
-            "ORDER BY p.common.codeId")
-    List<BoardListDto> findByParentIdByWithLastPostTitle(Pageable pageable);
+            "WHERE c.parentCodeId = 1000 " +
+            "ORDER BY c.codeId")
+    Page<BoardListDto> findByParentIdByWithLastPostTitle(Pageable pageable);
+
 }
 
 

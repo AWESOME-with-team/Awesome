@@ -1,6 +1,7 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.model.dto.board.CommentRequestDto;
+import com.be.whereu.model.dto.board.CommentListResponseDto;
 import com.be.whereu.model.dto.board.CommentResponseDto;
 import com.be.whereu.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,9 @@ public class CommentController {
      * @return
      */
     @GetMapping("/comment/list")
-    public ResponseEntity<List<CommentResponseDto>> commentList(@RequestParam("postId") Long id, @RequestParam("pageNum") int pageNum) {
+    public ResponseEntity<List<CommentListResponseDto>> commentList(@RequestParam("postId") Long id, @RequestParam("pageNum") int pageNum) {
         try{
-            List<CommentResponseDto> commentList = commentService.getCommentList(id, pageNum);
+            List<CommentListResponseDto> commentList = commentService.getCommentList(id, pageNum);
             return  ResponseEntity.ok(commentList);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
@@ -56,14 +57,14 @@ public class CommentController {
     }
 
     /**
-     * 댓글 ,대댓글 등록 (id 제외하고 입력 )
+     * 댓글 ,대댓글 등록 ( postId, content, parentId(대댓글인 경우만) 필요)
      * @param commentRequestDto
      * @return
      */
     @PostMapping("/comment")
-    public ResponseEntity<CommentResponseDto> addComment(@RequestBody CommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentListResponseDto> addComment(@RequestBody CommentRequestDto commentRequestDto) {
         try {
-            CommentResponseDto dto = commentService.addComment(commentRequestDto);
+            CommentListResponseDto dto = commentService.addComment(commentRequestDto);
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
@@ -73,14 +74,14 @@ public class CommentController {
     }
 
     /**
-     * 댓글 수정
+     * 댓글 수정( Id와 content 필요)
      * @param commentRequestDto
      * @return
      */
     @PatchMapping("/comment")
-    public ResponseEntity<CommentResponseDto> updateComment(@RequestBody CommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentListResponseDto> updateComment(@RequestBody CommentRequestDto commentRequestDto) {
         try {
-            CommentResponseDto dto = commentService.updateComment(commentRequestDto);
+            CommentListResponseDto dto = commentService.updateComment(commentRequestDto);
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
@@ -113,10 +114,10 @@ public class CommentController {
      * @return
      */
     @PostMapping("/like")
-    public ResponseEntity<CommentResponseDto> likeComment(@RequestParam("commentId") Long id) {
+    public ResponseEntity<Boolean> commentLike(@RequestParam("commentId") Long id) {
         try {
-            CommentResponseDto dto = commentService.likeComment(id);
-            return ResponseEntity.ok(dto);
+            boolean likeStatus=commentService.toggleLikeComment(id);
+            return ResponseEntity.ok(likeStatus);
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
@@ -124,21 +125,5 @@ public class CommentController {
         }
     }
 
-    /**
-     * 댓글 좋아요 -
-     * @param id
-     * @return
-     */
-    @PostMapping("/unlike")
-    public ResponseEntity<CommentResponseDto> unlikeComment(@RequestParam("commentId") Long id) {
-        try {
-            CommentResponseDto dto = commentService.unlikeComment(id);
-            return ResponseEntity.ok(dto);
-        } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
 
-    }
 }
