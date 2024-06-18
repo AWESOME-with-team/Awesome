@@ -1,13 +1,11 @@
 package com.be.whereu.model.entity;
 
 import com.be.whereu.model.dto.board.CommentRequestDto;
-import com.be.whereu.model.dto.board.CommentResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @NoArgsConstructor

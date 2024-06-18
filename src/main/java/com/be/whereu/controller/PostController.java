@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 등록 ( id 제외하고 입력)
+     * 게시글 등록 ( title, content 필요)
      * @param postRequestDto
      * @return
      */
@@ -44,7 +44,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 수정
+     * 게시글 수정(id, title, content 필요 -형님 죄송합니다.. 3개만 필요해요)
      * @param postRequestDto
      * @return
      */

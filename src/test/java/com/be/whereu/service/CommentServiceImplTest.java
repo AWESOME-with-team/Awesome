@@ -1,7 +1,7 @@
 package com.be.whereu.service;
 
 import com.be.whereu.model.dto.board.CommentRequestDto;
-import com.be.whereu.model.dto.board.CommentResponseDto;
+import com.be.whereu.model.dto.board.CommentListResponseDto;
 import com.be.whereu.model.entity.CommentEntity;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.repository.CommentRepository;
@@ -65,7 +65,7 @@ class CommentServiceImplTest {
         });
 
         // 테스트 메서드 호출
-        CommentResponseDto result = commentServiceImpl.addComment(commentRequestDto);
+        CommentListResponseDto result = commentServiceImpl.addComment(commentRequestDto);
 
         // 결과 검증
         assertNotNull(result, "결과는 null이 아니어야 합니다.");
@@ -84,7 +84,7 @@ class CommentServiceImplTest {
         when(memberRepository.findById(1L)).thenThrow(DataAccessException.class);
 
         // 테스트 메서드 호출
-        CommentResponseDto result = commentServiceImpl.addComment(commentRequestDto);
+        CommentListResponseDto result = commentServiceImpl.addComment(commentRequestDto);
 
         // 결과 검증
         assertNull(result, "결과는 null이어야 합니다.");
