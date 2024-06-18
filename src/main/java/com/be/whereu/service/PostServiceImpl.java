@@ -21,10 +21,8 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,7 +38,7 @@ public class PostServiceImpl implements PostService {
 
 
     private static final int POST_PAGE_SIZE = 15;
-    private static final int BOARD_PAGE_SIZE = 5;
+    private static final int BOARD_PAGE_SIZE = 10;
     private final CommentRepository commentRepository;
 
 
@@ -192,26 +190,7 @@ public class PostServiceImpl implements PostService {
     public List<BoardListDto> getBoardList(int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, BOARD_PAGE_SIZE, Sort.by("id").descending());
         try {
-            List<BoardListDto> result = new ArrayList<>();
-            for (long i = 1001L; i <= 1010L; i++) {
-                CommonEntity commonEntity = commonRepository.findById(i)
-                        .orElseThrow(() -> new IllegalArgumentException("Not Found CommonData"));
-                List<BoardListDto> list = postRepository.findByCommonOrderByIdDesc(commonEntity,pageable).stream()
-                        .map(BoardListDto::fromEntity)
-                        .toList();
-                if (list.isEmpty()) {
-                    BoardListDto boardListDto = new BoardListDto();
-                    boardListDto.setId(commonEntity.getCodeId());
-                    boardListDto.setTitle(commonEntity.getCodeName());
-                    result.add(boardListDto);
-
-                }else{
-                    result.add(list.get(0));
-                }
-            }
-
-            return result;
-
+            return postRepository.findByParentIdByWithLastPostTitle(pageable);
         }catch (DataAccessException e){
             log.error("DataBase access error",e);
             return Collections.emptyList();  //빈리스트 반환
@@ -219,10 +198,6 @@ public class PostServiceImpl implements PostService {
             log.error("An unexpected error",e);
             return Collections.emptyList();
         }
-
-
-
-
 
     }
     @Transactional
