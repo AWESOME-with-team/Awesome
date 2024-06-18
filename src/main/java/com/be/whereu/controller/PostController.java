@@ -118,7 +118,7 @@ public class PostController {
      * @return
      */
     @GetMapping("/post/list")
-    public ResponseEntity<List<BoardDetailsListDto>> getPostList(@RequestParam("commonId") Long id, @RequestParam("pageNum") int pageNum) {
+    public ResponseEntity<List<BoardDetailsListDto>> getPostList(@RequestParam("commonId") Long id,  @RequestParam(value = "pageNum", defaultValue = "0") int pageNum) {
         try {
             List<BoardDetailsListDto> boardDetailsListDto = postService.getBoardDetailsList(id , pageNum);
             return ResponseEntity.ok(boardDetailsListDto);
@@ -133,7 +133,7 @@ public class PostController {
      * @return List<boardListDto>
      */
     @GetMapping("/list")
-    public ResponseEntity<List<BoardListDto>> boardList(@RequestParam("pageNum") int pageNum){
+    public ResponseEntity<List<BoardListDto>> boardList(@RequestParam(value = "pageNum", defaultValue = "0") int pageNum){
         try {
 
             List<BoardListDto> boardListDtos = postService.getBoardList(pageNum);

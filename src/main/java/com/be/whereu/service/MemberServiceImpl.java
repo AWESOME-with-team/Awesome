@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberSerivce{
     @Override
     public List<String> searchNickListByGroupId(String nick , Long groupId) {
 
-        return  memberRepository.findMemberListExcludingGroupMemberAndAlreadyRequestedList(nick, groupId).orElseThrow(()-> new ResourceNotFoundException("no resource about "+nick))
+        return  memberRepository.findMemberListExcludingGroupMemberAndAnotherGenderAndAlreadyRequestedList(nick, groupId).orElseThrow(()-> new ResourceNotFoundException("no resource about "+nick))
                 .stream()
                 .map(MemberEntity::getNick)
                 .toList();
