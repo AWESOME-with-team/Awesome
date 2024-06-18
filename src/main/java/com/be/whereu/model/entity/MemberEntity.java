@@ -59,8 +59,8 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostEntity> postList;
 
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<PostLikeEntity> likedPosts = new HashSet<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostLikeEntity> likedPosts ;
 
 
 

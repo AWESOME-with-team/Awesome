@@ -18,4 +18,5 @@ public interface PostService {
     public PostResponseDto likePost(Long id);
     public PostResponseDto unlikePost(Long id);
     public PostResponseDto viewCountPost(Long id);
+    public boolean toggleLikePost(Long id);
 }

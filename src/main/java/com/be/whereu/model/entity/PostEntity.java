@@ -41,33 +41,19 @@ public class PostEntity extends BaseEntity {
     @Column(name = "view_count")
     private Integer viewCount;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> comments;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostLikeEntity> likedMembers;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "post_likes",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id")
-    )
-    private Set<MemberEntity> likedMembers = new HashSet<>();
 
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
     public Integer getViewCount(){
         return viewCount !=null ? viewCount : 0;
     }
-
-    public Integer getLikeCount(){
-        return likeCount !=null ? likeCount : 0;
-    }
-
-
 
 
 
@@ -88,6 +74,8 @@ public class PostEntity extends BaseEntity {
                 .build();
 
     }
+
+
 
 
 
