@@ -135,7 +135,6 @@ public class PostController {
     @GetMapping("/list")
     public ResponseEntity<List<BoardListDto>> boardList(@RequestParam(value = "pageNum", defaultValue = "0") int pageNum){
         try {
-
             List<BoardListDto> boardListDtos = postService.getBoardList(pageNum);
 
             return ResponseEntity.ok(boardListDtos);
