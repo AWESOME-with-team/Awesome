@@ -18,9 +18,9 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
 
     @Query("SELECT new com.be.whereu.model.dto.board.CommentListResponseDto(" +
-            "c.id, c.post.id, " +
-            "m.id, m.nick,  m.universityName, " +
-            "c.content, COUNT(cl.id), c.parent.id, c.createAt,c.modifiedAt) " +
+            "c.id, " +
+            "m.nick," +
+            "c.content, COUNT(cl.id), c.parent.id, c.createAt) " +
             "FROM CommentEntity c " +
             "LEFT JOIN c.member m " +
             "LEFT JOIN c.likeComments cl " +
