@@ -22,10 +22,15 @@ public class BoardDetailsListDto {
     private String createDate;
     private Long commentCount;
     private Long likeCount;
+    private Integer viewCount;
     private Boolean isLiked;
 
+    // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
+    public Integer getViewCount(){
+        return viewCount !=null ? viewCount : 0;
+    }
 
-    public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount, Boolean isLiked ){
+    public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount,  Integer viewCount, Boolean isLiked ){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.postId = postId;
@@ -35,7 +40,9 @@ public class BoardDetailsListDto {
         this.createDate = createDate.format(formatter);
         this.commentCount = commentCount;
         this.likeCount = likeCount;
+        this.viewCount = viewCount;
         this.isLiked = isLiked;
+
 
 
     }
