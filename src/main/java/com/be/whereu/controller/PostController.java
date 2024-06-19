@@ -2,10 +2,7 @@ package com.be.whereu.controller;
 
 
 
-import com.be.whereu.model.dto.board.BoardDetailsListDto;
-import com.be.whereu.model.dto.board.BoardListDto;
-import com.be.whereu.model.dto.board.PostRequestDto;
-import com.be.whereu.model.dto.board.PostResponseDto;
+import com.be.whereu.model.dto.board.*;
 import com.be.whereu.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +19,21 @@ import java.util.List;
 @Slf4j
 public class PostController {
     private final PostService postService;
+
+    /**
+     * categoryList
+     * @return
+     */
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        try{
+            return ResponseEntity.ok(postService.getCategoryList());
+        }catch (Exception e) {
+            //INTERNAL_SERVER_ERROR
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
     /**
      * 게시글 등록 ( title, content 필요)
