@@ -25,6 +25,7 @@ public class PostResponseDto {
     private String createDate;
     private String modifyDate;
     private String School;
+    private Integer commentCount;
 
 
 
@@ -67,6 +68,7 @@ public class PostResponseDto {
                 .createDate(entity.getCreateAt().format(formatter))
                 .modifyDate(entity.getModifiedAt().format(formatter))
                 .School(entity.getMember().getUniversityName())
+                .commentCount(entity.getComments().size())
                 .build();
     }
 
