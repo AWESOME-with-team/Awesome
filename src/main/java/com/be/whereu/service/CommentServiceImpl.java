@@ -82,6 +82,8 @@ public class CommentServiceImpl implements CommentService {
                             parentComment.setChildren(new ArrayList<>());
                         }
                         parentComment.getChildren().add(comment);
+                        // 부모 댓글의 replyCount를 증가시킴
+                        parentComment.setReplyCount(parentComment.getReplyCount() + 1);
                     }
                 }
             }
@@ -95,6 +97,7 @@ public class CommentServiceImpl implements CommentService {
             return Collections.emptyList();
         }
     }
+
 
     //댓글 등록
     @Transactional

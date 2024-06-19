@@ -6,12 +6,11 @@ import com.be.whereu.model.dto.board.BoardDetailsListDto;
 import com.be.whereu.model.dto.board.BoardListDto;
 import com.be.whereu.model.dto.board.PostRequestDto;
 import com.be.whereu.model.dto.board.PostResponseDto;
-import com.be.whereu.model.entity.CommonEntity;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.model.entity.PostEntity;
 
 import com.be.whereu.model.entity.PostLikeEntity;
-import com.be.whereu.model.isLike;
+
 import com.be.whereu.repository.*;
 import com.be.whereu.security.authentication.SecurityContextManager;
 import jakarta.transaction.Transactional;
