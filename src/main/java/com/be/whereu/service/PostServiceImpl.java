@@ -2,14 +2,8 @@ package com.be.whereu.service;
 
 
 import com.be.whereu.exception.ResourceNotFoundException;
-import com.be.whereu.model.dto.board.BoardDetailsListDto;
-import com.be.whereu.model.dto.board.BoardListDto;
-import com.be.whereu.model.dto.board.PostRequestDto;
-import com.be.whereu.model.dto.board.PostResponseDto;
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.PostEntity;
-
-import com.be.whereu.model.entity.PostLikeEntity;
+import com.be.whereu.model.dto.board.*;
+import com.be.whereu.model.entity.*;
 
 import com.be.whereu.repository.*;
 import com.be.whereu.security.authentication.SecurityContextManager;
@@ -74,6 +68,22 @@ public class PostServiceImpl implements PostService {
 
             throw new RuntimeException("An unexpected error occurred", e);
         }
+    }
+
+    @Override
+    public List<CategoryDto> getCategoryList() {
+        List<CommonEntity> CategoryList =commonRepository.findByParentCodeId(1000L);
+        List<CategoryDto> CategoryListDto = CategoryList.stream()
+                .map(entity->{
+                    return CategoryDto.builder()
+                            .categoryId(entity.getCodeId())
+                            .boardName(entity.getCodeName()).build();
+                })
+
+                .collect(Collectors.toList());
+
+
+        return CategoryListDto;
     }
 
     // 게시물 등록
