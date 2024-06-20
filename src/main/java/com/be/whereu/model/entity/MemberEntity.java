@@ -48,6 +48,8 @@ public class MemberEntity extends BaseEntity {
     private String universityEmail;
     @Column(name= "u_Name")
     private String universityName;
+    @Column(name="profile")
+    private String profile; // 이미지 경로
     @OneToMany(mappedBy = "member" ,cascade = CascadeType.ALL, orphanRemoval = true )
     private List<MemberGroupEntity> GroupList;
     @Transient
@@ -65,6 +67,9 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentLikeEntity> likedComments;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ScrapEntity> scrapList;
+
 
 
     public static MemberEntity toMemberEntity(MemberDto dto) {
@@ -76,9 +81,7 @@ public class MemberEntity extends BaseEntity {
                 .universityEmail(dto.getUniversityEmail())
                 .universityName(dto.getUniversityName())
                 .gender(Gender.fromString(dto.getGender()))
-//                .GroupList(dto.getGroupList())
-//                .school(dto.getSchool())
-//                .chatList(dto.getChatList())
+                .profile(dto.getProfile())
                 .build();
     }
 }

@@ -36,7 +36,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 등록 ( title, content 필요)
+     * 게시글 등록 ( commonId, title, content 필요)
      * @param postRequestDto
      * @return
      */
@@ -158,23 +158,6 @@ public class PostController {
     }
 
 
-
-    /**
-     * 조회수 +
-     * @param id
-     * @return
-     */
-    @PostMapping("/post/view-count")
-    public ResponseEntity<PostResponseDto> viewPostCount(@RequestParam("postId") Long id){
-        try {
-            PostResponseDto postResponseDto = postService.viewCountPost(id);
-            return ResponseEntity.ok(postResponseDto);
-        } catch (Exception e) {
-            //INTERNAL_SERVER_ERROR
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
-    }
 
     /**
      * 좋아요
