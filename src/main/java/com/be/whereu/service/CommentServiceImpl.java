@@ -28,9 +28,9 @@ import java.util.*;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final SecurityContextManager securityContextManager;
+    private final PostService postService;
 
     private final int COMMENT_PAGE_SIZE = 15;
     private final CommentLikeRepository commentLikeRepository;
@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
                     }
                 }
             }
-
+            postService.viewCountPost(postId);
             return topLevelComments;
         } catch (DataAccessException e) {
             log.error("DataBase access error", e);
