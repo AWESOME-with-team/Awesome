@@ -20,8 +20,40 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
+
     /**
-     * categoryList
+     * 내가 쓴 게시글 list 가져오기
+     * @param pageNum
+     * @return
+     */
+    @GetMapping("/post/list/me")
+    public ResponseEntity<List<ScrapAndSaveListDto>> getMyPostList(@RequestParam int pageNum){
+        try{
+            return ResponseEntity.ok(postService.getMyPostList(pageNum));
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    /**
+     * 스크랩 List 가져오기
+     * @param pageNum
+     * @return
+     */
+    @GetMapping("/scrap/list")
+    public ResponseEntity<List<ScrapAndSaveListDto>> getScrapList(@RequestParam int pageNum) {
+        try{
+            return ResponseEntity.ok(postService.getScrapList(pageNum));
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * 카테고리 list 가져오기
      * @return
      */
     @GetMapping("/category")
@@ -31,7 +63,7 @@ public class PostController {
         }catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
     }
 
@@ -49,7 +81,7 @@ public class PostController {
         }catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
 
 
@@ -71,7 +103,7 @@ public class PostController {
         }catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
 
 
@@ -96,14 +128,14 @@ public class PostController {
         }catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(false);
+            return ResponseEntity.status(500).build();
         }
 
     }
 
 
     /**
-     * 게시물 가져오기
+     * 게시글 가져오기
      * @param id
      * @return
      */
@@ -115,7 +147,7 @@ public class PostController {
         } catch (Exception e) {
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
 
 
@@ -124,7 +156,7 @@ public class PostController {
 
 
     /**
-     * 게시물 리스트 가져오기
+     * 게시물 list 가져오기
      * @param id
      * @param pageNum
      * @return
@@ -157,10 +189,24 @@ public class PostController {
         }
     }
 
-
+    /**
+     * 스크랩 toggle
+     * @param id
+     * @return
+     */
+    @PostMapping("/post/scrap")
+    public ResponseEntity<Boolean> postScrap(@RequestParam("postId") Long id){
+        try {
+            boolean scrapStatus= postService.toggleScrapPost(id);
+            return ResponseEntity.ok(scrapStatus);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     /**
-     * 좋아요
+     * 좋아요 toggle
      * @param id
      * @return
      */
@@ -172,7 +218,7 @@ public class PostController {
         }catch (Exception e){
             //INTERNAL_SERVER_ERROR
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
     }
 

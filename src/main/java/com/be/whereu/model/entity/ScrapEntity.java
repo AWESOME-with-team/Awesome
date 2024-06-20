@@ -24,4 +24,9 @@ public class ScrapEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey( name = "scrap_member_fk"))
     private MemberEntity member;
+
+    public ScrapEntity(PostEntity post, MemberEntity member) {
+        this.post = post;
+        this.member = member;
+    }
 }

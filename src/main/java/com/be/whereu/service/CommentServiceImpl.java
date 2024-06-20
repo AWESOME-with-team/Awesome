@@ -55,8 +55,8 @@ public class CommentServiceImpl implements CommentService {
     }
     @Transactional
     @Override
-    public List<CommentListResponseDto> getCommentList(Long postId, int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, COMMENT_PAGE_SIZE, Sort.by("id").descending());
+    public List<CommentListResponseDto> getCommentList(Long postId, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, COMMENT_PAGE_SIZE, Sort.by("id").descending());
         try {
             // 최상위 댓글들을 포함한 모든 댓글들을 한 번에 가져오는 쿼리 실행
             List<CommentListResponseDto> allComments = commentRepository.findByPostIdWithLikeCount(postId, pageable);
