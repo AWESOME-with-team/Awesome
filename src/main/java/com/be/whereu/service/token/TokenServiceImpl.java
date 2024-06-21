@@ -2,10 +2,14 @@ package com.be.whereu.service.token;
 
 import com.be.whereu.config.properties.TokenPropertiesConfig;
 import com.be.whereu.model.WhereUJwt;
+import com.be.whereu.repository.RefreshTokenRepository;
+import com.be.whereu.security.authentication.SecurityContextManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class TokenServiceImpl implements TokenService {
     private final TokenPropertiesConfig tokenPropertiesConfig;
     private final JwtService jwtService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final SecurityContextManager securityContextManager;
 
     @Override
     public void createTokenAndAddCookie(Long memberId, HttpServletResponse response, boolean universityEmail) {
@@ -45,5 +51,21 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public WhereUJwt validateAccessTokenAndToMakeObjectJwt(String accessJws) {
         return WhereUJwt.fromJwt(accessJws, tokenPropertiesConfig.getAccessToken().getSecret());
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteRefreshTokenWithContextHolderFromMemberId() {
+        Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
+        int result=refreshTokenRepository.deleteByMemberId(memberId);
+        if(result>0) {
+            // SecurityContextHolder 비우기
+            SecurityContextHolder.clearContext();
+            return true;
+        }else{
+            return false;
+        }
+
+
     }
 }
