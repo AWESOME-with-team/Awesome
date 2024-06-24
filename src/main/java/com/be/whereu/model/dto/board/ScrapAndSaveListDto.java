@@ -1,6 +1,5 @@
 package com.be.whereu.model.dto.board;
 
-import com.be.whereu.model.entity.PostEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
-public class BoardDetailsListDto {
+public class ScrapAndSaveListDto {
     private Long postId;
+    private String boardName;
     private String nick;
     private String title;
     private String content;
@@ -26,15 +26,12 @@ public class BoardDetailsListDto {
     private Boolean isLiked;
     private Boolean isScrap;
 
-    // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
-    public Integer getViewCount(){
-        return viewCount !=null ? viewCount : 0;
-    }
 
-    public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount,  Integer viewCount, Boolean isLiked, Boolean isScrap ){
+    public ScrapAndSaveListDto(Long postId, String boardName, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount, Integer viewCount, Boolean isLiked, Boolean isScrap ){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.postId = postId;
+        this.boardName = boardName;
         this.nick = nick;
         this.title = title;
         this.content = content;
@@ -48,5 +45,4 @@ public class BoardDetailsListDto {
 
 
     }
-
- }
+}

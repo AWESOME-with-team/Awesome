@@ -29,13 +29,64 @@ public class PostServiceImpl implements PostService {
     private final SecurityContextManager securityContextManager;
     private final CommonRepository commonRepository;
     private final PostLikeRepository postLikeRepository;
-
+    private final ScrapRepository scrapRepository;
+    private final CommentRepository commentRepository;
 
 
     private static final int POST_PAGE_SIZE = 15;
     private static final int BOARD_PAGE_SIZE = 10;
-    private final CommentRepository commentRepository;
 
+    @Transactional
+    @Override
+    public List<ScrapAndSaveListDto> getMyPostList(int pageNum) {
+        try{
+            Pageable pageable = PageRequest.of(pageNum, POST_PAGE_SIZE, Sort.by("id").descending());
+            Long memberId=Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            Page<ScrapAndSaveListDto> myPostList=postRepository.findMySavePostByMemberId(memberId,pageable);
+            return  myPostList.stream().toList();
+        }catch (DataAccessException e) {
+
+            throw new RuntimeException("Database access error", e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("An unexpected error occurred", e);
+        }
+
+    }
+
+
+
+    @Transactional
+    @Override
+    public boolean toggleScrapPost(Long postId) {
+        try {
+            Long memberId = Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            MemberEntity member = new MemberEntity();
+            member.setId(memberId);
+
+            PostEntity post = postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
+
+            boolean isScrap = scrapRepository.existsByPostIdAndMemberId(postId, memberId);
+            if (isScrap) {
+                scrapRepository.deleteByPostIdAndMemberId(postId, memberId); //스크랩 취소
+
+            } else {
+                ScrapEntity scrap = new ScrapEntity(post,member);// 스크랩 성공
+
+                scrapRepository.save(scrap);
+
+            }
+
+            return !isScrap; //true이면 좋아요 성공 false이면 좋아요 취소
+        } catch (DataAccessException e) {
+
+            throw new RuntimeException("Database access error", e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("An unexpected error occurred", e);
+        }
+    }
 
     @Transactional
     public boolean toggleLikePost(Long postId) {
@@ -55,9 +106,7 @@ public class PostServiceImpl implements PostService {
 
             } else {
                 PostLikeEntity postLike = PostLikeEntity.toEntity(post, member);// 좋아요 성공
-
                 postLikeRepository.save(postLike);
-                postRepository.save(post);
             }
 
             return !isLiked; //true이면 좋아요 성공 false이면 좋아요 취소
@@ -69,6 +118,28 @@ public class PostServiceImpl implements PostService {
             throw new RuntimeException("An unexpected error occurred", e);
         }
     }
+
+    @Override
+    public List<ScrapAndSaveListDto> getScrapList(int pageNum) {
+        try {
+
+            Long memberId=Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            Pageable pageable = PageRequest.of(pageNum, POST_PAGE_SIZE, Sort.by("id").descending());
+            Page<ScrapAndSaveListDto> scrapListDtos =postRepository.findScrapListByMemberId(memberId,pageable);
+            return scrapListDtos.stream().toList();
+        }catch (DataAccessException e) {
+            log.error("Database access error", e);
+            throw e;  // 예외를 다시 던져 트랜잭션 롤백
+        } catch (Exception e) {
+            log.error("An unexpected error", e);
+            throw e;  // 예외를 다시 던져 트랜잭션 롤백
+        }
+
+
+    }
+
+
+
 
     @Override
     public List<CategoryDto> getCategoryList() {
@@ -85,6 +156,8 @@ public class PostServiceImpl implements PostService {
 
         return CategoryListDto;
     }
+
+
 
     // 게시물 등록
     @Transactional
@@ -184,10 +257,10 @@ public class PostServiceImpl implements PostService {
     //게시물 리스트 불러오기
     @Transactional
     @Override
-    public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNumber) {
+    public List<BoardDetailsListDto> getBoardDetailsList(Long id, int pageNum) {
 
         Long memberId=Long.parseLong(securityContextManager.getAuthenticatedUserName());
-        Pageable pageable = PageRequest.of(pageNumber, POST_PAGE_SIZE, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(pageNum, POST_PAGE_SIZE, Sort.by("id").descending());
         Page<BoardDetailsListDto> boardDetailsListDto = new PageImpl<BoardDetailsListDto>(new ArrayList<BoardDetailsListDto>());
         try {
             boardDetailsListDto=postRepository.findByCommonIdOrderByIdDescWithCommentCount(id,memberId,pageable);
@@ -203,8 +276,8 @@ public class PostServiceImpl implements PostService {
     //게시판 List 리스트 불러오기
     @Transactional
     @Override
-    public List<BoardListDto> getBoardList(int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, BOARD_PAGE_SIZE, Sort.by("id").descending());
+    public List<BoardListDto> getBoardList(int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, BOARD_PAGE_SIZE, Sort.by("id").descending());
         try {
             Page<BoardListDto> boardListDto=postRepository.findByParentIdByWithLastPostTitle(pageable);
             return boardListDto.stream()
