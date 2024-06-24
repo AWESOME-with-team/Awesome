@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
     @Query("SELECT new com.be.whereu.model.dto.board.BoardDetailsListDto(p.id, m.nick, p.title, p.content, p.createAt, COUNT(distinct c.id), COUNT(distinct l.id), p.viewCount," +
             "CASE WHEN pl.id IS NOT NULL THEN true ELSE false END, " +
-            "CASE WHEN s.id IS NOT NULL THEN true ELSE false END) " +
+            "CASE WHEN s.id IS NOT NULL THEN true ELSE false END, m.profile) " +
             "FROM PostEntity p " +
             "LEFT JOIN p.member m " +
             "LEFT JOIN p.comments c " +
@@ -43,7 +43,7 @@ public interface PostRepository extends JpaRepository<PostEntity,Long> {
             "LEFT JOIN PostLikeEntity pl ON pl.post.id = p.id AND pl.member.id = :memberId " +
             "LEFT JOIN ScrapEntity s ON s.post.id =p.id AND s.member.id = :memberId " +
             "WHERE p.common.codeId = :commonId " +
-            "GROUP BY p.id, m.nick, p.title, p.content, p.createAt,p.viewCount, pl.id,s.id " +
+            "GROUP BY p.id, m.nick, p.title, p.content, p.createAt,p.viewCount, pl.id,s.id, m.profile " +
             "ORDER BY p.id DESC")
     Page<BoardDetailsListDto> findByCommonIdOrderByIdDescWithCommentCount(@Param("commonId") Long commonId,@Param("memberId") Long memberId, Pageable pageable);
 

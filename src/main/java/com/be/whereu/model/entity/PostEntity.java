@@ -74,8 +74,6 @@ public class PostEntity extends BaseEntity {
                 .common(common)
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .title(dto.getTitle())
-                .content(dto.getContent())
                 .build();
 
     }

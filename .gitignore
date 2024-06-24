@@ -43,3 +43,4 @@ application-jwt.yml
 application-univcert.yml
 application-cors.yml
 application-frontend.yml
+application-profile.yml
