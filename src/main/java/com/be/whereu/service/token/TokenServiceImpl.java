@@ -23,6 +23,8 @@ public class TokenServiceImpl implements TokenService {
         accessCookie.setHttpOnly(true);
         accessCookie.setPath("/");
         response.addCookie(accessCookie);
+        response.addHeader("access-token" , accessJws);
+
 
         String refreshJws = jwtService.createRefreshTokenFromMemberId(memberId);
         log.debug("refreshJws: {}", refreshJws);
@@ -30,6 +32,7 @@ public class TokenServiceImpl implements TokenService {
         refreshCookie.setHttpOnly(true);
         refreshCookie.setPath("/");
         response.addCookie(refreshCookie);
+        response.addHeader("refresh-token" , refreshJws);
     }
 
     @Override
