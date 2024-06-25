@@ -31,8 +31,11 @@ public class GroupEntity extends BaseEntity{
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private isMatch ismatch;
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group" ,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberGroupEntity> memberGroup;
+    @OneToMany(mappedBy="group",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMemberGroupEntity> chatMemberGroup;
+
 
     public static GroupEntity toEntity(GroupDto dto) {
         return GroupEntity.builder()

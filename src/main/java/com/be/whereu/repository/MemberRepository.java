@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
     Optional<MemberEntity> findByNick(String nick);
 
     @Query("SELECT m FROM MemberEntity m " +
-                  "LEFT JOIN FETCH m.GroupList mg " +
+                  "LEFT JOIN FETCH m.groupList mg " +
                   "WHERE m.nick LIKE %:nick% " +
                   "AND m.id NOT IN (" +
                   "    SELECT mg.member.id FROM MemberGroupEntity mg " +
@@ -27,7 +27,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
 
 
     @Query("SELECT m FROM MemberEntity m " +
-            "LEFT JOIN FETCH m.GroupList mg " +
+            "LEFT JOIN FETCH m.groupList mg " +
             "WHERE m.nick LIKE %:nick% " +
             "AND m.id NOT IN (" +
             "    SELECT mg.member.id FROM MemberGroupEntity mg " +
@@ -40,7 +40,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
     Optional<List<MemberEntity>> findMemberListExcludingGroupMemberAndAlreadyRequestedList(@Param("nick") String nick, @Param("groupId") Long groupId);
 
     @Query("SELECT m FROM MemberEntity m " +
-            "LEFT JOIN FETCH m.GroupList mg " +
+            "LEFT JOIN FETCH m.groupList mg " +
             "WHERE m.nick LIKE %:nick% " +
             "AND m.gender = (SELECT g.gender FROM GroupEntity g WHERE g.id = :groupId) " +
             "AND m.id NOT IN (" +

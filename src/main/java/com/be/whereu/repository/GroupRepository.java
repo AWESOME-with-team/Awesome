@@ -16,4 +16,11 @@ public interface GroupRepository extends JpaRepository<GroupEntity,Long> {
     @Query("SELECT g FROM GroupEntity g JOIN FETCH g.memberGroup mg JOIN FETCH mg.member WHERE g.id = :groupId")
     Optional<GroupEntity> findGroupWithMembers(@Param("groupId") Long groupId);
 
+
+    void deleteByHostId(Long hostId);
+
+    boolean existsByHostId(Long hostId);
+
+    List<GroupEntity> findByHostId(Long hostId);
+
 }

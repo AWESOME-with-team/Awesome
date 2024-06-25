@@ -29,10 +29,11 @@ public class MemberDto {
     private String createAt;
     private String modifiedAt;
     private String gender;
+    private String profile;
 
 
 
-    public MemberDto(Long id, String email, String nick, LocalDate birth, String universityEmail, String universityName, LocalDateTime createAt, LocalDateTime modifiedAt,  Gender gender) {
+    public MemberDto(Long id, String email, String nick, LocalDate birth, String universityEmail, String universityName, LocalDateTime createAt, LocalDateTime modifiedAt,  Gender gender, String profile) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.id = id;
         this.email = email;
@@ -43,7 +44,7 @@ public class MemberDto {
         this.createAt = createAt.format(formatter);
         this.modifiedAt = modifiedAt.format(formatter);
         this.gender=gender.toString();
-
+        this.profile=profile;
     }
 
 
@@ -58,6 +59,7 @@ public class MemberDto {
                 .modifiedAt(formattingFromModifiedDate(memberEntity))
                 .gender(memberEntity.getGender().name())
                 .birth(memberEntity.getBirth())
+                .profile(memberEntity.getProfile())
                 .build();
 
     }
