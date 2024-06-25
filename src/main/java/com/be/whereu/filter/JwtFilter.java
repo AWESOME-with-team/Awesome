@@ -37,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/swagger-ui/swagger-ui-standalone-preset.js", "/v3/api-docs/swagger-config", "/swagger-ui/swagger-ui-standalone-preset.js",
                 "/swagger-ui/index.html", "/swagger-ui/swagger-ui.css", "/v3/api-docs", //swagger
                 "/api/refresh", "/login", "/api/login", "/api/login/success", "/api/login/fail","/api/university/code","/api/university/email",
+                "/api/login/kakao",
                 "/api/member/nick", "/api/university/check","/api/member/update" ,"/h2-console","/favicon.ico"// Corrected path
 
         };

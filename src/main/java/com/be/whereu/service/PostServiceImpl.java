@@ -264,10 +264,6 @@ public class PostServiceImpl implements PostService {
         Page<BoardDetailsListDto> boardDetailsListDto = new PageImpl<BoardDetailsListDto>(new ArrayList<BoardDetailsListDto>());
         try {
             boardDetailsListDto=postRepository.findByCommonIdOrderByIdDescWithCommentCount(id,memberId,pageable);
-            var list=boardDetailsListDto.stream().toList();
-            for(BoardDetailsListDto boardDetailsListDto1:list){
-                System.out.println(boardDetailsListDto1.getIsLiked());
-            }
         } catch (DataAccessException e) {
             log.error("DataBase access error", e);
         } catch (Exception e) {

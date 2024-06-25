@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -23,8 +22,8 @@ public class CommentListResponseDto {
     private Integer replyCount;
     private Long parentId;
     private String createDate;
-    private String profileImage;
     private List<CommentListResponseDto> children;
+    private String profile;
 
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
@@ -35,7 +34,7 @@ public class CommentListResponseDto {
         return replyCount != null ? replyCount : 0; // null 체크
     }
 
-    public CommentListResponseDto(Long id, String nick, String content, Long likeCount,  Long parentId, LocalDateTime createDate) {
+    public CommentListResponseDto(Long id, String nick, String content, Long likeCount,  Long parentId, LocalDateTime createDate, String profile) {
         // LocalDate to String
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.id = id;
@@ -44,8 +43,7 @@ public class CommentListResponseDto {
         this.likeCount = Math.toIntExact(likeCount);
         this.parentId = parentId;
         this.createDate = createDate.format(formatter);
-        this.profileImage = "assets/default_avatar.png";
-
+        this.profile = profile;
     }
 
 

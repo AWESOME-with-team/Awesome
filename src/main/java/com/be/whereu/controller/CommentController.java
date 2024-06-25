@@ -45,7 +45,7 @@ public class CommentController {
      * @return
      */
     @GetMapping("/comment/list")
-    public ResponseEntity<List<CommentListResponseDto>> commentList(@RequestParam("postId") Long id, @RequestParam("pageNum") int pageNum) {
+    public ResponseEntity<List<CommentListResponseDto>> commentList(@RequestParam("postId") Long id, @RequestParam(value = "pageNum", defaultValue = "0") int pageNum) {
         try{
             List<CommentListResponseDto> commentList = commentService.getCommentList(id, pageNum);
             return  ResponseEntity.ok(commentList);
@@ -63,6 +63,7 @@ public class CommentController {
      */
     @PostMapping("/comment")
     public ResponseEntity<CommentListResponseDto> addComment(@RequestBody CommentRequestDto commentRequestDto) {
+        System.out.println(commentRequestDto.getParentId());
         try {
             CommentListResponseDto dto = commentService.addComment(commentRequestDto);
             return ResponseEntity.ok(dto);
