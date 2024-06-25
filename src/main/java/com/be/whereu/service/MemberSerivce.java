@@ -10,4 +10,5 @@ public interface MemberSerivce {
     public MemberDto getData(long memberId);
     public Boolean findMemberNick(String nick);
     public List<String> searchNickListByGroupId(String nick , Long groupId);
+    public Boolean deleteMember();
 }

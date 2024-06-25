@@ -25,7 +25,7 @@ public class ChatEntity {
     private Rtype rtype;
     @OneToMany(mappedBy = "chat")
     private List<ChatMemberGroupEntity> chatMembers;
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat" ,cascade = CascadeType.ALL ,orphanRemoval = true)
     private List<MessageEntity> message;
 
 

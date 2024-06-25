@@ -6,18 +6,24 @@ import com.be.whereu.exception.ResourceNotFoundException;
 import com.be.whereu.model.Gender;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
-import com.be.whereu.model.entity.MemberEntity;
-import com.be.whereu.model.entity.SchoolEntity;
+import com.be.whereu.model.entity.*;
+import com.be.whereu.repository.ChatMemberGroupRepository;
+import com.be.whereu.repository.ChatRepository;
+import com.be.whereu.repository.GroupRepository;
 import com.be.whereu.repository.MemberRepository;
+import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.token.JwtService;
 import com.be.whereu.service.token.TokenService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -25,8 +31,12 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberSerivce{
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
-    private final TokenService tokenService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
+
+    private final GroupRepository groupRepository;
+    private final ChatRepository chatRepository;
+    private final ChatMemberGroupRepository chatMemberGroupRepository;
+    private final SecurityContextManager securityContextManager;
 
     @Transactional
     @Override
@@ -93,6 +103,53 @@ public class MemberServiceImpl implements MemberSerivce{
                 .stream()
                 .map(MemberEntity::getNick)
                 .toList();
+
+    }
+
+    @Transactional
+    @Override
+    public Boolean deleteMember() {
+        try {
+
+            Long memberId=Long.parseLong(securityContextManager.getAuthenticatedUserName());
+            MemberEntity member = memberRepository.findById(memberId)
+                    .orElseThrow(()-> new EntityNotFoundException("Member not found"));
+
+           
+
+
+            boolean memberIsHost=groupRepository.existsByHostId(memberId);
+                log.info("member isHost: {}", memberIsHost);
+
+            
+            if(memberIsHost) {
+                //hostId가 memberId인 groupList 불러온다.
+                List<GroupEntity> groupList = groupRepository.findByHostId(memberId);
+
+                // group의 연관관계를 통해 chatList로 변환해서
+                List<ChatEntity> chatList = groupList.stream()
+                        .flatMap(group -> group.getChatMemberGroup().stream()
+                                .map(ChatMemberGroupEntity::getChat))
+                        .toList();
+
+                //chat을 삭제한다
+                chatRepository.deleteAll(chatList);
+                // group을 삭제를 한다.
+                groupRepository.deleteAll(groupList);
+
+            }
+
+
+            //최종적으로 member 삭제
+            memberRepository.delete(member);
+            return true;
+        }catch (EntityNotFoundException e) {
+            log.info("member not found");
+            return false;
+        }catch (Exception e) {
+            log.error("error while saving access token : {}", e.getMessage());
+            return false;
+        }
 
     }
 

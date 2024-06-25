@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +51,7 @@ public class MemberEntity extends BaseEntity {
 
 
     @OneToMany(mappedBy = "member" ,cascade = CascadeType.ALL, orphanRemoval = true )
-    private List<MemberGroupEntity> GroupList;
+    private List<MemberGroupEntity> groupList;
     @Transient
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private SchoolEntity school;
@@ -60,12 +59,30 @@ public class MemberEntity extends BaseEntity {
     private List<ChatMemberGroupEntity> chatList;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostEntity> postList;
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> commentList;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostLikeEntity> likedPosts ;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentLikeEntity> likedComments;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScrapEntity> scrapList;
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH} )
+    private List<MessageEntity> messageList; // 추가된 부분
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private RefreshTokenEntity refreshToken;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupRequestEntity> groupRequest;
+
+    @PreRemove
+    private void preRemove() {
+
+        //member 삭제시 messageEntity의 memberId를 null로 설정
+        for (MessageEntity message : messageList) {
+            message.setMember(null);
+        }
+
+    }
 
 
 
