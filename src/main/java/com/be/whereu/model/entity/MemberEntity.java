@@ -71,8 +71,6 @@ public class MemberEntity extends BaseEntity {
     private Set<ScrapEntity> scrapList;
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH} )
     private List<MessageEntity> messageList; // 추가된 부분
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private RefreshTokenEntity refreshToken;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupRequestEntity> groupRequest;
 

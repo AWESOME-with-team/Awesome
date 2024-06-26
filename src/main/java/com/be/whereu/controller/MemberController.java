@@ -57,6 +57,10 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * member 삭제 (회원 탈퇴)
+     * @return
+     */
     @DeleteMapping("/member/leave")
     public ResponseEntity<String> leaveMember() {
         boolean isSuccess = memberSerivce.deleteMember();
