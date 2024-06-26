@@ -25,13 +25,14 @@ public class BoardDetailsListDto {
     private Integer viewCount;
     private Boolean isLiked;
     private Boolean isScrap;
+    private String profile;
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체
     public Integer getViewCount(){
         return viewCount !=null ? viewCount : 0;
     }
 
-    public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount,  Integer viewCount, Boolean isLiked, Boolean isScrap ){
+    public BoardDetailsListDto(Long postId, String nick, String title, String content, LocalDateTime createDate, Long commentCount, Long likeCount,  Integer viewCount, Boolean isLiked, Boolean isScrap, String profile ){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         this.postId = postId;
@@ -44,7 +45,7 @@ public class BoardDetailsListDto {
         this.viewCount = viewCount != null ? viewCount : 0;
         this.isLiked = isLiked;
         this.isScrap = isScrap;
-
+        this.profile = profile;
 
 
     }

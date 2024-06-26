@@ -2,7 +2,7 @@ package com.be.whereu.repository;
 
 import com.be.whereu.model.dto.ChatListDto;
 import com.be.whereu.model.entity.ChatMemberGroupEntity;
-import com.be.whereu.model.entity.GroupRequestEntity;
+import com.be.whereu.model.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +27,8 @@ public interface ChatMemberGroupRepository extends JpaRepository<ChatMemberGroup
     Optional<List<ChatListDto>> findChatListByMemberId(@Param("memberId") Long memberId);
 
     Optional<List<ChatMemberGroupEntity>> findByGroupId(Long groupId);
+
+
+
+    ChatMemberGroupEntity findByMemberIdAndGroupId(Long memberId, Long GroupId);
 }

@@ -20,12 +20,12 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Query("SELECT new com.be.whereu.model.dto.board.CommentListResponseDto(" +
             "c.id, " +
             "m.nick," +
-            "c.content, COUNT(cl.id), c.parent.id, c.createAt) " +
+            "c.content, COUNT(cl.id), c.parent.id, c.createAt, m.profile) " +
             "FROM CommentEntity c " +
             "LEFT JOIN c.member m " +
             "LEFT JOIN c.likeComments cl " +
             "WHERE c.post.id = :postId " +
-            "GROUP BY c.id, m.id, m.email, m.nick, m.birth, m.universityEmail, m.universityName, m.createAt, m.modifiedAt, m.gender, c.content, c.parent.id, c.createAt " +
+            "GROUP BY c.id, m.id, m.email, m.nick, m.birth, m.universityEmail, m.universityName, m.createAt, m.modifiedAt, m.gender, c.content, c.parent.id, c.createAt, m.profile " +
             "ORDER BY c.id DESC")
     List<CommentListResponseDto> findByPostIdWithLikeCount(@Param("postId") Long postId, Pageable pageable);
 

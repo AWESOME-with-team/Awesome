@@ -18,7 +18,9 @@ public class MessageEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name="message_member_fk"))
+    @JoinColumn(name = "member_id"
+            ,referencedColumnName = "member_id"
+            , foreignKey = @ForeignKey(name="message_member_fk"))
     private MemberEntity member;
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)

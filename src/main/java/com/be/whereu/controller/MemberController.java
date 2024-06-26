@@ -57,5 +57,16 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    @DeleteMapping("/member/leave")
+    public ResponseEntity<String> leaveMember() {
+        boolean isSuccess = memberSerivce.deleteMember();
+        if(isSuccess){
+            return ResponseEntity.ok().body("success");
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+
+    }
+
 
 }
