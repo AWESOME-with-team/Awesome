@@ -1,16 +1,23 @@
 package com.be.whereu.controller;
 
+import com.be.whereu.service.UserService;
+import com.be.whereu.service.token.TokenService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.service.RequestBodyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class LoginController {
+
+    private final TokenService tokenService;
+    private final UserService userService;
 
     @GetMapping("/login")
     public ResponseEntity<String> login() {
@@ -47,7 +54,7 @@ public class LoginController {
 
     @PostMapping("/login/kakao")
     public  ResponseEntity<String> loginKakao(@RequestBody Map<String,String> email, HttpServletResponse response){
-
+        System.out.println(email.get("email"));
         userService.checkAndJoinUser(email.get("email"), response);
         return ResponseEntity.status(HttpStatus.OK).body("login kakao");
     }

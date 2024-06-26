@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class SecurityManagerImplTest {
 
     @InjectMocks
-    private SecurityManagerImpl securityManager;
+    private SecurityManagerImpl securityManager ;
 
     @Mock
     private HttpServletRequest request;

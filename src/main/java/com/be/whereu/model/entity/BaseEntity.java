@@ -42,6 +42,7 @@ public class BaseEntity {
 
     @PreUpdate
     public void formattingBeforeModifiedDate(){
+        System.out.println("오는지");
         String customLocalDateTime= LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.modifiedAt=LocalDateTime.parse(customLocalDateTime,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
