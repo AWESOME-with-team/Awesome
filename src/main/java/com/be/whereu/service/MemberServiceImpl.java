@@ -7,10 +7,7 @@ import com.be.whereu.model.Gender;
 import com.be.whereu.model.WhereUJwt;
 import com.be.whereu.model.dto.MemberDto;
 import com.be.whereu.model.entity.*;
-import com.be.whereu.repository.ChatMemberGroupRepository;
-import com.be.whereu.repository.ChatRepository;
-import com.be.whereu.repository.GroupRepository;
-import com.be.whereu.repository.MemberRepository;
+import com.be.whereu.repository.*;
 import com.be.whereu.security.authentication.SecurityContextManager;
 import com.be.whereu.service.token.JwtService;
 import com.be.whereu.service.token.TokenService;
@@ -35,7 +32,7 @@ public class MemberServiceImpl implements MemberSerivce{
 
     private final GroupRepository groupRepository;
     private final ChatRepository chatRepository;
-    private final ChatMemberGroupRepository chatMemberGroupRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityContextManager securityContextManager;
 
     @Transactional
@@ -139,6 +136,8 @@ public class MemberServiceImpl implements MemberSerivce{
 
             }
 
+            //refreshToken 삭제
+            refreshTokenRepository.deleteByMemberId(memberId);
 
             //최종적으로 member 삭제
             memberRepository.delete(member);
