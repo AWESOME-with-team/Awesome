@@ -9,5 +9,5 @@ public interface ProfileService {
     String uploadProfileImage(MultipartFile file) throws IOException;
     void deleteProfileImage(Long memberId) throws IOException;
     void updateNickname(Long memberId, String nickname);
-    ProfileResponseDto getProfileDetails(Long memberId);
+    ProfileResponseDto getProfileDetails();
 }

@@ -95,22 +95,19 @@ public class ProfileServiceImpl implements ProfileService {
 
     //프로필 정보 불러오기
     @Override
-    public ProfileResponseDto getProfileDetails(Long memberId) {
-        String username = securityContextManager.getAuthenticatedUserName();
-        Optional<MemberEntity> optionalMember = memberRepository.findById(Long.parseLong(username));
-
-        if (optionalMember.isPresent()) {
-            MemberEntity member = optionalMember.get();
-            ProfileResponseDto response = new ProfileResponseDto();
-            response.setNick(member.getNick());
-            response.setEmail(member.getEmail());
-            response.setUniversityEmail(member.getUniversityEmail());
-            response.setUniversityName(member.getUniversityName());
-            response.setProfile(member.getProfile());
+    public ProfileResponseDto getProfileDetails() {
+        String userId = securityContextManager.getAuthenticatedUserName();
+        var member = memberRepository.findById(Long.parseLong(userId)).orElseThrow(
+                () -> new ResourceNotFoundException("Member not found")
+        );
+        ProfileResponseDto response = new ProfileResponseDto();
+        response.setNick(member.getNick());
+        response.setEmail(member.getEmail());
+        response.setUniversityEmail(member.getUniversityEmail());
+        response.setUniversityName(member.getUniversityName());
+        response.setProfile(member.getProfile());
 
             return response;
-        } else {
-            throw new ResourceNotFoundException("Member not found");
-        }
+
     }
 }

@@ -84,13 +84,15 @@ public class ProfileController {
 
     /**
      * 프로필 불러오기
-     * @param id
+     * @param +
      * @return
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<ProfileResponseDto> getProfileDetails(@PathVariable Long id) {
+    @GetMapping("/list")
+    public ResponseEntity<ProfileResponseDto> getProfileDetails() {
+        System.out.println("여기 이셉션");
         try{
-            ProfileResponseDto profileDetails = profileService.getProfileDetails(id);
+            System.out.println("profile details");
+            ProfileResponseDto profileDetails = profileService.getProfileDetails();
             return ResponseEntity.ok(profileDetails);
         }catch (Exception e){
             e.printStackTrace();

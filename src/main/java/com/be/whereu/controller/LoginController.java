@@ -54,7 +54,7 @@ public class LoginController {
 
     @PostMapping("/login/kakao")
     public  ResponseEntity<String> loginKakao(@RequestBody Map<String,String> email, HttpServletResponse response){
-
+        
         userService.checkAndJoinUser(email.get("email"), response);
         return ResponseEntity.status(HttpStatus.OK).body("login kakao");
     }
