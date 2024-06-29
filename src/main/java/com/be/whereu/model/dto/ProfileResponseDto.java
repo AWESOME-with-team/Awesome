@@ -1,12 +1,10 @@
 package com.be.whereu.model.dto;
 
-import com.be.whereu.model.dto.board.CommentResponseDto;
 import com.be.whereu.model.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 @AllArgsConstructor
@@ -18,9 +16,8 @@ public class ProfileResponseDto {
     private String universityEmail;
     private String universityName;
     private String profile;
-    private MultipartFile profilePicture;
 
-    public ProfileResponseDto toDto(MemberEntity entity) {
+    public static ProfileResponseDto toDto(MemberEntity entity) {
         return ProfileResponseDto.builder()
                 .nick(entity.getNick())
                 .email(entity.getEmail())

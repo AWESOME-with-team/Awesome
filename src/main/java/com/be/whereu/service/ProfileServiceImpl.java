@@ -62,7 +62,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     //프로필 이미지 삭제
     @Override
-    public void deleteProfileImage(Long memberId) throws IOException {
+    @Transactional
+    public void deleteProfileImage() throws IOException {
         String username = securityContextManager.getAuthenticatedUserName();
         Optional<MemberEntity> optionalMember = memberRepository.findById(Long.parseLong(username));
 
@@ -82,6 +83,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     //닉네임 변경
     @Override
+    @Transactional
     public void updateNickname(String nick) {
         String username = securityContextManager.getAuthenticatedUserName();
         Optional<MemberEntity> optionalMember = memberRepository.findById(Long.parseLong(username));
@@ -95,6 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     //프로필 정보 불러오기
     @Override
+    @Transactional
     public ProfileResponseDto getProfileDetails() {
         String userId = securityContextManager.getAuthenticatedUserName();
         var member = memberRepository.findById(Long.parseLong(userId)).orElseThrow(
@@ -109,5 +112,11 @@ public class ProfileServiceImpl implements ProfileService {
 
         return response;
 
+    }
+
+    //프로필 이미지 얻기
+    @Override
+    public String getProfileImagePath() {
+        return profileImageConfig.getProfileImagePath();
     }
 }
