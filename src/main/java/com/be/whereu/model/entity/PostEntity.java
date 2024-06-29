@@ -52,7 +52,8 @@ public class PostEntity extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScrapEntity> scrapList;
 
-
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ComplaintEntity> complaints;
 
 
     // getter 메서드를 덮어쓰기 null인 경우는 0으로 대체

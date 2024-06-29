@@ -1,10 +1,10 @@
 package com.be.whereu.controller;
 
 import com.be.whereu.exception.ResourceNotFoundException;
-import com.be.whereu.exception.handler.GlobalExceptionHandler;
 import com.be.whereu.model.dto.ProfileResponseDto;
 import com.be.whereu.model.entity.MemberEntity;
 import com.be.whereu.repository.MemberRepository;
+import com.be.whereu.security.authentication.SecurityManagerImpl;
 import com.be.whereu.service.ProfileService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +23,7 @@ public class ProfileController {
 
     private final MemberRepository memberRepository;
     private final ProfileService profileService;
+    private final SecurityManagerImpl securityManagerImpl;
 
     /**
      * 프로필 이미지 업로드하기
@@ -31,7 +32,7 @@ public class ProfileController {
      * @return
      */
     @PostMapping(value = "/{id}/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadProfileImage(
+    public ResponseEntity<String> uploadProfileImage(
             @PathVariable Long id,
             @Parameter(
                     description = "Profile image file",
@@ -56,7 +57,7 @@ public class ProfileController {
      * @return
      */
     @DeleteMapping("/{id}/delete/image")
-    public ResponseEntity<?> deleteProfileImage(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProfileImage(@PathVariable Long id) {
         try {
             profileService.deleteProfileImage(id);
             return ResponseEntity.ok("Profile image deleted successfully");
@@ -67,14 +68,13 @@ public class ProfileController {
 
     /**
      * 닉네임 변경하기
-     * @param id
      * @param nick
      * @return
      */
-    @PatchMapping("/{id}/nick")
-    public ResponseEntity<?> updateNickname(@PathVariable Long id, @RequestParam String nick) {
+    @PatchMapping("/change/nick")
+    public ResponseEntity<String> updateNickname(@RequestParam String nick) {
         try{
-            profileService.updateNickname(id, nick);
+            profileService.updateNickname(nick);
             return ResponseEntity.ok("Nickname updated successfully");
         }catch (Exception e){
             e.printStackTrace();

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class ProfileResponseDto {
     private String universityEmail;
     private String universityName;
     private String profile;
+    private MultipartFile profilePicture;
 
     public ProfileResponseDto toDto(MemberEntity entity) {
         return ProfileResponseDto.builder()
