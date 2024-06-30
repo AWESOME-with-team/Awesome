@@ -15,8 +15,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private TokenService tokenService;
-    private UserService userService;
+    private final TokenService tokenService;
+    private final UserService userService;
 
     @GetMapping("/login")
     public ResponseEntity<String> login() {
@@ -41,12 +41,12 @@ public class LoginController {
      * @return
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(){
+    public ResponseEntity<Boolean> logout(){
         boolean isSuccess= tokenService.deleteRefreshTokenWithContextHolderFromMemberId();
         if(isSuccess){
-            return ResponseEntity.status(HttpStatus.OK).body("logout success");
+            return ResponseEntity.status(HttpStatus.OK).body(isSuccess);
         }else{
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("logout fail");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(isSuccess);
         }
 
     }

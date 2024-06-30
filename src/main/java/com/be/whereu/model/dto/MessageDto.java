@@ -27,6 +27,6 @@ public class MessageDto {
                 .id(messageEntity.getId())
                 .content(messageEntity.getContent())
                 .createAt(createTime)
-                .nick(messageEntity.getMember().getNick()).build();
+                .nick(messageEntity.getMember()==null? "존재하지 않는 사용자" :messageEntity.getMember().getNick()).build();
     }
 }
