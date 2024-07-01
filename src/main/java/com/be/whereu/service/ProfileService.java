@@ -7,7 +7,8 @@ import java.io.IOException;
 
 public interface ProfileService {
     String uploadProfileImage(MultipartFile file) throws IOException;
-    void deleteProfileImage(Long memberId) throws IOException;
-    void updateNickname(Long memberId, String nickname);
+    void deleteProfileImage() throws IOException;
+    void updateNickname(String nickname);
     ProfileResponseDto getProfileDetails();
+    String getProfileImagePath();
 }

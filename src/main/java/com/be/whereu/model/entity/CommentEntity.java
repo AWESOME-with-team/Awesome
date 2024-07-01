@@ -44,6 +44,8 @@ public class CommentEntity extends BaseEntity{
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentLikeEntity> likeComments;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ComplaintEntity> complaints;
 
     public static CommentEntity toEntity(CommentRequestDto CommentRequestDto) {
         if (CommentRequestDto == null) {
