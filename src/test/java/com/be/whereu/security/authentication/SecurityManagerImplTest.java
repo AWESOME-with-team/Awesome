@@ -3,6 +3,7 @@ package com.be.whereu.security.authentication;
 import com.be.whereu.model.WhereUJwt;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("SecurityManager 객체 작동 테스트")
 public class SecurityManagerImplTest {
 
     @InjectMocks

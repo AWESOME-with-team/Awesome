@@ -29,6 +29,4 @@ public interface ChatMemberGroupRepository extends JpaRepository<ChatMemberGroup
     Optional<List<ChatMemberGroupEntity>> findByGroupId(Long groupId);
 
 
-
-    ChatMemberGroupEntity findByMemberIdAndGroupId(Long memberId, Long GroupId);
 }

@@ -12,24 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<PostEntity,Long> {
 
-    @Query(value = "SELECT p.id AS postId, m.nick AS nick, p.title AS title, p.content AS content, p.create_at AS createAt, " +
-            "COUNT(DISTINCT c.id) AS commentCount, COUNT(DISTINCT l.id) AS likeCount, p.view_count AS viewCount " +
-            "CASE WHEN EXISTS (SELECT 1 FROM post_likes pl WHERE pl.post_id = p.id AND pl.member_id = :memberId) THEN TRUE ELSE FALSE END AS isLiked " +
-            "FROM post p " +
-            "LEFT JOIN member_tbl m ON p.member_id = m.id " +
-            "LEFT JOIN comment c ON c.post_id = p.id " +
-            "LEFT JOIN post_likes l ON l.post_id = p.id " +
-            "WHERE p.common_id = :commonId " +
-            "GROUP BY p.id, m.nick, p.title, p.content, p.create_at, p.view_count " +
-            "ORDER BY p.id DESC",
-            countQuery = "SELECT COUNT(*) " +
-                    "FROM post p " +
-                    "WHERE p.common_id = :commonId",
-            nativeQuery = true)
-    Page<BoardDetailsListDto> findByCommonIdOrderByIdDescWithCommentCount2(@Param("commonId") Long commonId, @Param("memberId") Long memberId, Pageable pageable);
-
-
-
 
 
 
