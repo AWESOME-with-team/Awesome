@@ -49,9 +49,9 @@ public class ProfileServiceImpl implements ProfileService {
 
 
         //기존에 프로필 이미지가 있으면 삭제
-        if(oldFileName != null && !oldFileName.isEmpty()){
+        if (oldFileName != null && !oldFileName.isEmpty()) {
             Path oldFilePath = Paths.get(profileImageConfig.getProfileImagePath(), oldFileName);
-            if(Files.exists(oldFilePath)){
+            if (Files.exists(oldFilePath)) {
                 Files.delete(oldFilePath);
             }
         }
@@ -62,7 +62,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     //프로필 이미지 삭제
     @Override
-    public void deleteProfileImage(Long memberId) throws IOException {
+    @Transactional
+    public void deleteProfileImage() throws IOException {
         String username = securityContextManager.getAuthenticatedUserName();
         Optional<MemberEntity> optionalMember = memberRepository.findById(Long.parseLong(username));
 
@@ -82,7 +83,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     //닉네임 변경
     @Override
-    public void updateNickname(Long memberId, String nick) {
+    @Transactional
+    public void updateNickname(String nick) {
         String username = securityContextManager.getAuthenticatedUserName();
         Optional<MemberEntity> optionalMember = memberRepository.findById(Long.parseLong(username));
 
@@ -95,6 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     //프로필 정보 불러오기
     @Override
+    @Transactional
     public ProfileResponseDto getProfileDetails() {
         String userId = securityContextManager.getAuthenticatedUserName();
         var member = memberRepository.findById(Long.parseLong(userId)).orElseThrow(
@@ -107,7 +110,13 @@ public class ProfileServiceImpl implements ProfileService {
         response.setUniversityName(member.getUniversityName());
         response.setProfile(member.getProfile());
 
-            return response;
+        return response;
 
+    }
+
+    //프로필 이미지 얻기
+    @Override
+    public String getProfileImagePath() {
+        return profileImageConfig.getProfileImagePath();
     }
 }

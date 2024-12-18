@@ -1,6 +1,5 @@
 package com.be.whereu.model.dto;
 
-import com.be.whereu.model.dto.board.CommentResponseDto;
 import com.be.whereu.model.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,7 @@ public class ProfileResponseDto {
     private String universityName;
     private String profile;
 
-    public ProfileResponseDto toDto(MemberEntity entity) {
+    public static ProfileResponseDto toDto(MemberEntity entity) {
         return ProfileResponseDto.builder()
                 .nick(entity.getNick())
                 .email(entity.getEmail())
